@@ -1,23 +1,23 @@
 <template>
   <div class="app-container">
-<!--    <el-form ref="queryForm" :model="queryParams" :inline="true">-->
-<!--      <el-form-item label="登录时间">-->
-<!--        <el-date-picker-->
-<!--          v-model="dateRange"-->
-<!--          size="small"-->
-<!--          style="width: 240px"-->
-<!--          value-format="yyyy-MM-dd"-->
-<!--          type="daterange"-->
-<!--          range-separator="-"-->
-<!--          start-placeholder="开始日期"-->
-<!--          end-placeholder="结束日期"-->
-<!--        />-->
-<!--      </el-form-item>-->
-<!--      <el-form-item>-->
-<!--        <el-button v-permission="['system:log:query']" type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
-<!--        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
-<!--      </el-form-item>-->
-<!--    </el-form>-->
+    <el-form ref="queryForm" :model="queryParams" :inline="true">
+      <el-form-item label="登录时间">
+        <el-date-picker
+          v-model="dateRange"
+          size="small"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button v-permission="['system:log:query']" type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -39,12 +39,12 @@
       <el-table-column label="UA" prop="ua" :show-overflow-tooltip="true" />
       <el-table-column label="登录时间" prop="create_time" width="150" />
     </el-table>
-<!--    <pagination-->
-<!--      :total="total"-->
-<!--      :page="queryParams.page"-->
-<!--      :limit="queryParams.limit"-->
-<!--      @pagination="handlePageChange"-->
-<!--    />-->
+    <pagination
+      :total="total"
+      :page="queryParams.page"
+      :limit="queryParams.limit"
+      @pagination="handlePageChange"
+    />
   </div>
 </template>
 

@@ -20,6 +20,39 @@ router.post('/taroteadelAttend', (req, res, next) => {
   console.log(req.body)
   let {sendattends_id} = req.body
 
+  ReqAttendModel.findOne({
+    attributes: ['sendattends_id'],
+    where: {
+      sendattends_id: sendattends_id
+    },
+  }).then(therr=>{
+    console.log(therr)
+    if (therr)
+    {
+      ReqAttendModel.delSingleId(sendattends_id).then(ReqAttend => {
+        console.log(ReqAttend)
+        if (ReqAttend) {
+        } else {
+          return res.json({
+            code: 20000,
+            message: `成功删除签到请求`,
+            data: ReqAttend
+          })
+        }
+      })
+
+
+    }
+    else {
+      return res.json({
+        code: 40000,
+        message: `删除失败，请重试,该签到Id不存在`,
+        data: '----'
+      })
+    }
+
+  })
+
   ReqAttendModel.delSingleId(sendattends_id).then(ReqAttend => {
     if (!ReqAttend) {
       return res.json({
@@ -256,6 +289,7 @@ router.post('/tarostulocation', (req, res, next) => {
 })
 router.post('/tarosearch', (req, res, next) => {
 
+  console.log(req.body)
   const tea_id = req.body.tea_id
 
   let project = ReqAttendModel.findAll({
@@ -314,33 +348,33 @@ router.post('/tarosearchstu', (req, res, next) => {
   })
 
 })
-router.post('/tarodeloutdate', async (req, res, next) => {
+router.post('/tarodeloutdate',  (req, res, next) => {
 
-
+  console.log(req.body)
   const tea_id = req.body.tea_id
-  await ReqAttendModel.destroy({
-    where: {
-      tea_id: tea_id,
-      // dead_time:{
-      //   [Op.lt]: new Date(),
-      //   // [Op.lt]: nowdate,
-      // }
-    }
-  }).then(function (succ) {
-    if (succ) {
-      return res.send({
-        code: 20000,
-        message: '删除成功',
-        data: succ
-      })
-    } else {
-      return res.send({
-        code: 40000,
-        message: '没有签到请求可以删除',
-        data: succ
-      })
-    }
-  })
+  // await ReqAttendModel.destroy({
+  //   where: {
+  //     tea_id: tea_id,
+  //     dead_time:{
+  //       [Op.lt]: new Date(),
+  //       // [Op.lt]: nowdate,
+  //     }
+  //   }
+  // }).then(function (succ) {
+  //   if (succ) {
+  //     return res.send({
+  //       code: 20000,
+  //       message: '删除成功',
+  //       data: succ
+  //     })
+  //   } else {
+  //     return res.send({
+  //       code: 40000,
+  //       message: '没有签到请求可以删除',
+  //       data: succ
+  //     })
+  //   }
+  // })
 
 
   /*  let project = ReqAttendModel.findAll({

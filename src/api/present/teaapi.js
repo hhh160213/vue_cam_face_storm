@@ -69,3 +69,38 @@ export function updatetea(data) {
 }
 
 
+export function getTeaReqAttend(data) {
+  return request({
+    url: '/reqattend/tarosearch',
+    method: 'post',
+    data
+  })
+}
+
+export function TeaAddReqAttend(data) {
+  return request({
+    url: '/reqattend/taroadd',
+    method: 'post',
+    data
+  })
+}
+
+
+export function DelTeaReqAttend(data) {
+  return request({
+    url: '/reqattend/taroteadelAttend',
+    method: 'post',
+    data
+  })
+}
+
+
+export function DelTeaOUtdatedReqAttend(data) {
+  return request({
+    url: '/reqattend/tarodeloutdate',
+    method: 'post',
+    data
+  })
+}
+
+
