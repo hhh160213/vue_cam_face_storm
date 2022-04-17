@@ -9,6 +9,8 @@ const RoleModel = require('../model/rolesmodel')
 const AttendModel = require('../model/attend_records')
 const ReqAttendModel = require('../model/req_sendattend')
 
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const fs = require('fs')
 const StuinfoModel = require('../model/stuinfo')
 const TeainfoModel = require('../model/teainfo')
@@ -24,12 +26,13 @@ const client = new AipFace(APP_ID, API_KEY, SECRET_KEY)
 router.post('/matched', (req, respp, next) => {
   console.log(req.body)
   let sucStuNumArr = []
+  let sucStuNumArrID = []
   let orirespNumber
   let updatereq
   const { picName, imgUrl: imgData, stu_id, stu_nick_name, ATTENDID } = req.body || {}
   // let picName=req.body.picName
   // let imgData=req.body.imgData
-  const image = fs.readFileSync(`D:\\Develop\\face_recog\\1219express\\vue_campus_face\\server\\public\\images\\face\\${picName}.jpg`)
+  const image = fs.readFileSync(`F:\\Develop_work\\myWorkSpace\\graduction\\vue_cam_face_storm\\server\\public\\images\\face\\${picName}.jpg`)
   // const image = fs.readFileSync(`public/images/face/${picName}.jpg`);
   // const image = fs.readFileSync(`../public/images/face/${picName}.jpg`);
   // console.log(image)
@@ -57,14 +60,13 @@ router.post('/matched', (req, respp, next) => {
       let facve_score = res.result.score
       if (facve_score >= 85) {
         ReqAttendModel.findOne({
-          attributes: ['suc_stuname', 'resp_number'],
           where: {
             sendattends_id: Number(ATTENDID)
           }
         }).then(findall => {
-          if (findall.dataValues.suc_stuname.includes(stu_nick_name)) {
+          if (findall.dataValues.suc_stuid.toString().includes(stu_id.toString())) {
             console.log('into if false')
-            return res.json({
+            return respp.json({
               code: 40000,
               message: `签到失败，可能已经签到过`,
               data: findall
@@ -73,10 +75,16 @@ router.post('/matched', (req, respp, next) => {
           } else {
             orirespNumber = findall.dataValues.resp_number
             sucStuNumArr.push(findall.dataValues.suc_stuname, stu_nick_name)
+            sucStuNumArrID.push(stu_id)
             let stringarr = sucStuNumArr.join(',')
+            let stringarrid = sucStuNumArrID.join(',')
             console.log(stringarr)
             orirespNumber++
-            updatereq = ReqAttendModel.update({ suc_stuname: stringarr, resp_number: orirespNumber },
+            updatereq = ReqAttendModel.update({
+                suc_stuname: stringarr,
+                resp_number: orirespNumber,
+                suc_stuid: stringarrid
+              },
               {
                 where: {
                   sendattends_id: Number(ATTENDID)
@@ -165,20 +173,46 @@ router.post('/list', (req, res, next) => {
 //通过post方式stu_id获取单个学生的api
 router.post('/infoed', (req, res, next) => {
   console.log(req.body)
+  if (req.body.page <= 0) {
+    req.body.page = 1
+  }
+  if (req.body.limit > 50) {
+    req.body.limit = 50
+
+  }
+  let create_time = {}
+  if (req.body.date && req.body.date.length === 2) {
+    create_time =
+     {
+        [Op.between]: req.body.date
+      }
+
+  }
+  const offset = (req.body.page - 1) * req.body.limit
 
   const stu_id = req.body.stu_id
-  let project = AttendModel.findAll({
+  let project = AttendModel.findAndCountAll({
+    offset: offset || 1,
+    limit: parseInt(req.body.limit) || 5,
     where: {
-      stu_id: stu_id
-    }
+      stu_id: stu_id,
+      create_time
+    },
+
+
   })
   project.then(function(tea_stu) {
     if (tea_stu !== null) {
       // let stuarr = [tea_stu]
       return res.json({
         code: 20000,
-        message: '获取单个学生签到记录成功',
-        data: tea_stu
+        message: '获取学生签到记录成功',
+        data: {
+
+          total: tea_stu.count,
+          realArrdata: tea_stu.rows
+
+        }
       })
     } else {
       return res.json({

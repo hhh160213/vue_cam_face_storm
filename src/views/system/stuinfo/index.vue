@@ -50,8 +50,6 @@
 
     <!--    学生个人信息的表格-->
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-      <el-table-column label="编号" prop="stu_id" width="90"/>
-      <el-table-column label="用户帐号" prop="stu_name" width="90"/>
       <el-table-column label="年龄" prop="stu_age" width="70"/>
       <el-table-column
         prop="stu_pic"
@@ -62,7 +60,7 @@
         </template>
       </el-table-column>
       <el-table-column label="性别" prop="stu_sex" width="70"/>
-      <el-table-column label="邮箱" prop="stu_email" width="70"/>
+      <el-table-column label="邮箱" prop="stu_email" width="170"/>
       <el-table-column label="手机号" prop="stu_mobile" width="140"/>
       <el-table-column label="身份证" prop="stu_idcard" width="180"/>
       <el-table-column label="户籍" prop="stu_oriplace" width="80"/>
@@ -119,17 +117,8 @@
     <!--    查看学生的个人教师-->
     <el-table v-loading="loading" :data="teaList" @selection-change="handleSelectionChange" style="margin-top: 5%"
               v-if="noseetea">
-      <el-table-column label="编号" prop="tea_id" width="90"/>
-      <el-table-column label="用户帐号" prop="tea_name" width="90"/>
       <el-table-column label="年龄" prop="tea_age" width="70"/>
-      <!--            <el-table-column-->
-      <!--              prop="stu_pic"-->
-      <!--              label="图片"-->
-      <!--              width="180">-->
-      <!--              <template slot-scope="scope">-->
-      <!--                <img :src="scope.row.stu_pic" style="width:100px;height:50px;"/>-->
-      <!--              </template>-->
-      <!--            </el-table-column>-->
+
       <el-table-column label="性别" prop="tea_sex" width="70"/>
       <el-table-column label="手机号" prop="tea_mobile" width="140"/>
       <el-table-column label="身份证" prop="tea_idcard" width="180"/>

@@ -20,6 +20,9 @@ const ReqAttendModel = sequelize.define('req_sendattends', {
   unresp_number: {
     type: Sequelize.INTEGER,
   },
+  suc_stuid: {
+    type: Sequelize.INTEGER,
+  },
 
 
   sendattends_id: {

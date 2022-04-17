@@ -16,6 +16,17 @@ export function addUser(data) {
   })
 }
 
+export function ListPost(data) {
+  return request({
+    url: '/user/listdo',
+    method: 'post',
+    data
+  })
+}
+
+
+
+
 export function delUser(data) {
   return request({
     url: '/user/del',

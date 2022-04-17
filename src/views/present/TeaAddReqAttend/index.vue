@@ -52,8 +52,8 @@
     <el-dialog :title="maptitle" :visible.sync="ifMapOpen" width="800px">
 
       <iframe id="mapPage" width="100%" height="600px" frameborder=0
-              src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=
-CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword">
+              src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&policy=1&radius=300&key=
+CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword&total=5">
       </iframe>
 
       <el-button type="primary" @click="handleCheckCloseLocation" size="small"  icon="el-icon-check">确认位置</el-button>
@@ -142,6 +142,7 @@ import store from '../../../store'
 import axios from "axios";
 import {sendEmail} from "@/api/system/user";
 import {stueditpwd} from "@/api/present/stuapi";
+import moment from 'moment'
 let globalloc;
 window.addEventListener('message', function(event) {
   // 接收位置信息，用户选择确认位置点后选点组件会触发该事件，回传用户的位置信息
@@ -284,25 +285,7 @@ export default {
       this.open = false
       this.reset()
     },
-    // 表单重置
-    reset() {
-      if (this.$refs.menu !== undefined) {
-        this.$refs.menu.setCheckedKeys([])
-      }
-      this.form = {
-        tea_id: undefined,
-        tea_name: undefined,
-        tea_age: undefined,
-        tea_pic: undefined,
-        tea_sex: undefined,
-        tea_mobile: undefined,
-        tea_idcard: undefined,
-        tea_oriplace: undefined,
-        tea_dormitory: undefined,
-        password: undefined,
-      }
-      this.resetForm('form')
-    },
+
     /** 搜索按钮操作 */
     handleQuery() {
       this.getList()
@@ -322,8 +305,6 @@ export default {
 
     //按钮发生变化
     selectCHange(event,item){
-
-      console.log(event,item)
       this.ifChooseLocSHow = event === 1;
 
     },
@@ -427,40 +408,42 @@ export default {
             attendTypeCheck:this.form.options[this.form.attendTypeCheck].label,
             reasonlocation:this.form.reasonLocation,
             reasonLati:this.form.LatiTude,
-            reasonLongTi:this.LongtiTude,
+            reasonLongTi:this.form.LongtiTude,
           };
-          console.log(httpData)
+          console.log('httpData',httpData)
+          let startTi=httpData.dateSel+" "+httpData.timeSel
+          let endTi=httpData.enddateSel+" "+httpData.endtimeSel
+          let startsuffix = moment(startTi).unix()
+          let endsuffix = moment(endTi).unix()
+          console.log('startsuffix',startsuffix)
+          console.log('endsuffix',endsuffix)
+          console.log('startTi',startTi)
+          console.log('endTi',endTi)
+          if (endsuffix<startsuffix)
+          {
 
-
-
-          // //发送请求
-          if (this.form.tea_id !== undefined) {
-            TeaAddReqAttend(httpData).then(response => {
-              this.msgSuccess(response.message)
-              this.open = false
-              this.getList()
-            })
+            console.log('into error')
+            this.msgError('截止时间不能晚于开始时间！')
           }
+        else {
+            //发送请求
+            if (this.form.tea_id !== undefined) {
+              TeaAddReqAttend(httpData).then(response => {
+                this.msgSuccess(response.message)
+                this.open = false
+                this.getList()
+              })
+            }
+          }
+
+
+
 
 
         }
       })
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const user_ids = row.user_id ? [row.user_id] : this.ids
-      this.$confirm('是否确认删除用户编号为"' + user_ids + '"的数据项?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(function () {
-        return delUser(user_ids)
-      }).then(() => {
-        this.getList()
-        this.msgSuccess('删除成功')
-      }).catch(function () {
-      })
-    }
+
   }
 }
 </script>

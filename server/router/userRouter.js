@@ -10,6 +10,9 @@ const StuinfoModel = require("../model/stuinfo");
 const TeainfoModel = require("../model/teainfo");
 const checkemail = {} //声明一个对象缓存邮箱和验证码，留着
 let sendmail = require('../utils/sendMail')
+
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const styles = {
   'bold': ['\x1B[1m', '\x1B[22m'],
   'italic': ['\x1B[3m', '\x1B[23m'],
@@ -320,8 +323,28 @@ router.post('/sendmail', (req, res, next) => {
 
 
 router.get('/list', (req, res, next) => {
-  UsersModel.findAll({
+  if (req.query.page <= 0) {
+    req.query.page = 1
+  }
+  if (req.query.limit > 50) {
+    req.query.limit = 50
+
+  }
+  let where = {}
+  if (req.query.date && req.query.date.length === 2) {
+    where = {
+      create_time: {
+        [Op.between]: req.query.date
+      }
+    }
+  }
+  const offset = (req.query.page - 1) * req.query.limit
+
+
+  UsersModel.findAndCountAll({
     attributes: {exclude: ['password']},
+    offset: offset || 1,
+    limit: parseInt(req.query.limit) || 5,
     include: [
       {model: RolesModel}
     ],
@@ -330,7 +353,55 @@ router.get('/list', (req, res, next) => {
     return res.json({
       code: 20000,
       message: '获取成功',
-      data: user_roles,
+      data: {
+        user_roles: user_roles.rows,
+        total: user_roles.count
+      }
+      // length:
+    })
+  })
+})
+router.post('/listdo', (req, res, next) => {
+
+  console.log(req.body)
+
+  if (req.body.page <= 0) {
+    req.body.page = 1
+  }
+  if (req.body.limit > 50) {
+    req.body.limit = 50
+
+  }
+  let create_time = {}
+  if (req.body.date && req.body.date.length === 2) {
+    create_time =
+      {
+        [Op.between]: req.body.date
+      }
+
+  }
+  const offset = (req.body.page - 1) * req.body.limit
+
+
+  UsersModel.findAndCountAll({
+    attributes: {exclude: ['password']},
+    offset: offset || 1,
+    limit: parseInt(req.body.limit) || 5,
+    include: [
+      {model: RolesModel}
+    ],
+    // where: {
+    //   user_name: req.body.user_name||'',
+    //   status: req.body.status||1,
+    // },
+  }).then(function (user_roles) {
+    return res.json({
+      code: 20000,
+      message: '获取成功',
+      data: {
+        total: user_roles.count,
+        user_roles: user_roles.rows,
+      }
       // length:
     })
   })

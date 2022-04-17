@@ -39,30 +39,10 @@
         </el-button>
       </el-col>
 
-      <el-col :span="1.5">
-        <el-button
-          v-permission="['present:face:look']"
-          type="primary"
-          icon="el-icon-info"
-          size="mini"
-          @click="handlelooktea"
-        >查看签到记录
-        </el-button>
-      </el-col>
+
 
     </el-row>
 
-    <!--    学生个人信息的表格-->
-    <el-table v-loading="loading" :data="userList" v-if="noseetea">
-      <el-table-column label="编号" prop="stu_id" width="90"/>
-      <el-table-column label="姓名" prop="stu_name" width="90"/>
-      <el-table-column label="签到方式" prop="attend_type" width="90"/>
-      <el-table-column label="签到时间" align="center" prop="create_time" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.create_time) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
 
 
 
@@ -136,7 +116,11 @@ export default {
         name: this.$store.getters.name,
         mystu_id:0
       },
+      fromparam:{
 
+        ATTENDID:0,
+
+      },
 
     }
   },
@@ -145,44 +129,14 @@ export default {
   },
   mounted() {
     this.getList()
+    console.log('face',this.$route.params.ATTENDID)
+    this.fromparam.ATTENDID=this.$route.params.ATTENDID
 
 
   },
   methods: {
 
-    /** 查询用户列表 */
-    getList() {
-      if (this.$store.getters.roles[0] === '学生') {
-        this.queryParams.stu_id=this.$store.getters.user_id
-        FaceInfo(this.queryParams).then(
-          response => {
-            this.userList = response.data
-            this.total = response.data.length
-            this.loading = false
-          }
-        )
-      } else {
-        this.queryParams.stu_name = undefined
-        this.queryParams.stu_id = undefined
-        listFace(this.queryParams).then(
-          response => {
-            console.log('打印获取到学生个人信息以后的response---------------------')
-            console.log(response)
-            console.log('打印获取到学生个人信息以后的data---------------------')
-            console.log(response.data)
-            this.userList = response.data
-            this.total = response.data.length
-            this.loading = false
-          }
-        )
 
-      }
-    },
-    //查看签到记录的表格
-    handlelooktea(){
-      this.noseetea = !this.noseetea
-
-    },
 
     /** 查询用户列表 */
     //摄像头部分
@@ -233,6 +187,9 @@ export default {
         imgUrl: basePath,
         picName: this.$store.getters.name,
         stu_id: this.$store.getters.user_id,
+        stu_nick_name: this.$store.getters.user_nick_name,
+        ATTENDID:this.$route.params.ATTENDID
+
       }
       console.log(faceData)
       // 发送到服务端人脸识别校验

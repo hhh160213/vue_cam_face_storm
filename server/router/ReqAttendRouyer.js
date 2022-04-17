@@ -221,6 +221,7 @@ router.post('/tarostulocation', (req, res, next) => {
 
   console.log(req.body)
   let sucStuNumArr = []
+  let sucStuIDArr = []
   let orirespNumber
   let updatereq
   const {stu_name, stu_nick_name, stu_id, actualLoctaion, actualDistance, ATTENDID} = req.body || {};
@@ -228,13 +229,13 @@ router.post('/tarostulocation', (req, res, next) => {
 
 
     ReqAttendModel.findOne({
-      attributes: ['suc_stuname', 'resp_number'],
       where: {
         sendattends_id: Number(ATTENDID)
       },
       // transaction: t
     }).then(findall => {
-      if (findall.dataValues.suc_stuname.includes(stu_nick_name)) {
+      console.log(findall)
+      if (findall.dataValues.suc_stuid.toString().includes(stu_id.toString())) {
         console.log('into if false')
         return res.json({
           code: 40000,
@@ -245,11 +246,14 @@ router.post('/tarostulocation', (req, res, next) => {
       } else {
         orirespNumber = findall.dataValues.resp_number
         sucStuNumArr.push(findall.dataValues.suc_stuname,stu_nick_name)
+        sucStuIDArr.push(stu_id)
+        console.log(sucStuIDArr)
         let stringarr = sucStuNumArr.join(',')
+        let stringIdarr = sucStuIDArr.join(',')
+        console.log(stringIdarr)
         console.log(stringarr)
         orirespNumber++
-        updatereq = ReqAttendModel.update({suc_stuname: stringarr, resp_number: orirespNumber},
-          // { transaction: t },
+        updatereq = ReqAttendModel.update({suc_stuname: stringarr, resp_number: orirespNumber,suc_stuid:stringIdarr},
           {
             where: {
               sendattends_id: Number(ATTENDID)
@@ -346,6 +350,39 @@ router.post('/tarosearchstu', (req, res, next) => {
       })
     }
   })
+
+})
+router.post('/tarojudgeifexist', (req, res, next) => {
+
+  console.log(req.body)
+  const { stu_id, ATTENDID} = req.body ;
+
+  ReqAttendModel.findOne({
+    where: {
+      sendattends_id: Number(ATTENDID)
+    },
+  }).then(findone=>{
+    console.log(findone.dataValues)
+    if (findone.dataValues.suc_stuid.toString().includes(stu_id.toString())) {
+      return res.json({
+        code: 40000,
+        message: `已经签到过,无需进行签到`,
+        data: findone
+      })
+
+    }
+    else {
+      return res.json({
+        code: 20000,
+        message: `即将进行签到操作`,
+        data: findone
+      })
+
+
+
+    }
+  })
+
 
 })
 router.post('/tarodeloutdate',  (req, res, next) => {

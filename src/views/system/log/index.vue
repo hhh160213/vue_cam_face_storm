@@ -14,7 +14,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button v-permission="['system:log:query']" type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -84,6 +84,7 @@ export default {
     getList() {
       this.queryParams.date = this.dateRange
       listLog(this.queryParams).then(response => {
+        console.log(response)
         this.logList = response.data.logs
         this.total = response.data.total
         this.loading = false

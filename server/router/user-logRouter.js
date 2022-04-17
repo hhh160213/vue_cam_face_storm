@@ -25,8 +25,8 @@ router.get('/list', (req, res, next) => {
   }
   const offset = (req.query.page - 1) * req.query.limit
   UserLogsModel.findAndCountAll({
-    offset,
-    limit: parseInt(req.query.limit) || 20,
+    offset: offset || 1,
+    limit: parseInt(req.query.limit) || 5,
     include: [
       {
         model: UsersModel,
@@ -34,7 +34,7 @@ router.get('/list', (req, res, next) => {
       }
     ],
     where: where,
-    order: [['create_time', 'DESC']]
+    order: [['create_time', 'ASC']]
   }).then(function(logs) {
     return res.json({
       code: 20000,

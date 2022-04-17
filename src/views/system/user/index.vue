@@ -1,36 +1,35 @@
 <template>
   <div class="app-container">
-    <el-form ref="queryForm" :model="queryParams" :inline="true">
-      <el-form-item label="用户帐号" prop="role_name">
-        <el-input
-          v-model="queryParams.user_name"
-          placeholder="请输入用户帐号"
-          clearable
-          size="small"
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="用户状态"
-          clearable
-          size="small"
-          style="width: 240px"
-        >
-          <el-option key="-1" label="全部" :value="undefined"/>
-          <el-option key="1" label="启用" :value="1"/>
-          <el-option key="0" label="停用" :value="0"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-permission="['system:user:query']" type="primary" icon="el-icon-search" size="mini"
-                   @click="handleQuery">搜索
-        </el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+<!--    <el-form ref="queryForm" :model="queryParams" :inline="true">-->
+<!--      <el-form-item label="用户帐号" prop="role_name">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.user_name"-->
+<!--          placeholder="请输入用户帐号"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          style="width: 240px"-->
+<!--        />-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="状态" prop="status">-->
+<!--        <el-select-->
+<!--          v-model="queryParams.status"-->
+<!--          placeholder="用户状态"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          style="width: 240px"-->
+<!--        >-->
+<!--          <el-option key="-1" label="全部" :value="undefined"/>-->
+<!--          <el-option key="1" label="启用" :value="1"/>-->
+<!--          <el-option key="0" label="停用" :value="0"/>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item>-->
+<!--        <el-button v-permission="['system:user:query']" type="primary" icon="el-icon-search" size="mini"-->
+<!--                   @click="handleQuery">搜索-->
+<!--        </el-button>-->
+<!--        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+<!--      </el-form-item>-->
+<!--    </el-form>-->
 
     <el-row :gutter="10" class="mb8">
       <!--      <el-col :span="1.5">-->
@@ -268,19 +267,19 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <!--    <pagination-->
-    <!--      :total="total"-->
-    <!--      :page="queryParams.page"-->
-    <!--      :limit="queryParams.limit"-->
-    <!--      @pagination="handlePageChange"-->
-    <!--    />-->
+        <pagination
+          :total="total"
+          :page="queryParams.page"
+          :limit="queryParams.limit"
+          @pagination="handlePageChange"
+        />
 
 
   </div>
 </template>
 
 <script>
-import {listUser, delUser, addUser, updateUser, updatePwd} from '@/api/system/user'
+import {listUser, delUser, addUser, updateUser, updatePwd,ListPost} from '@/api/system/user'
 import {addteaByUser} from '@/api/present/teaapi'
 import {listRole} from '@/api/system/role'
 import Pagination from '@/components/Pagination'
@@ -355,10 +354,10 @@ export default {
       roles: [],
       // 查询参数
       queryParams: {
-        user_name: undefined,
-        status: undefined,
-        // page: 1,
-        // limit: 20,
+        user_name: '',
+        status: 1,
+        page: 1,
+        limit: 5,
       },
       // 表单参数
       form: {},
@@ -443,14 +442,14 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true
-      if (this.queryParams.user_name === '') {
-        this.queryParams.user_name = undefined
-      }
-      listUser(this.queryParams).then(
+      // if (this.queryParams.user_name === '') {
+      //   this.queryParams.user_name = undefined
+      // }
+      ListPost({page:this.queryParams.page,limit:this.queryParams.limit}).then(
         response => {
           console.log(response)
           console.log(response.data)
-          let newarr = response.data.map(item => {
+          let newarr = response.data.user_roles.map(item => {
             if (item.roles[0].role_name === '管理员') {
 
 
@@ -460,8 +459,8 @@ export default {
 
           })
           console.log(response.data[0])
-          this.userList = response.data
-          this.total = response.data.length
+          this.userList = response.data.user_roles
+          this.total = response.data.total
           this.loading = false
         }
       )
@@ -651,7 +650,12 @@ export default {
       this.open = true
       this.title = '批量添加教师'
     },
-
+    /** 分页改变 */
+    handlePageChange(arg) {
+      this.queryParams.page = arg.page
+      this.queryParams.limit = arg.limit
+      this.getList()
+    },
 
     reLogin() {
       MessageBox.confirm('修改成功，请重新登录', '重新登录', {

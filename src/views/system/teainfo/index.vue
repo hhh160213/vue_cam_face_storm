@@ -70,19 +70,10 @@
     </el-row>
     <!--    教师个人信息的表格-->
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-      <el-table-column label="编号" prop="tea_id" width="90"/>
-      <el-table-column label="教师帐号" prop="tea_name" width="90"/>
       <el-table-column label="教师姓名" prop="tea_nick_name" width="90"/>
       <el-table-column label="年龄" prop="tea_age" width="70"/>
-            <el-table-column
-              prop="tea_pic"
-              label="图片"
-              width="180">
-              <template slot-scope="scope">
-                <img :src="scope.row.tea_pic" style="width:100px;height:50px;"/>
-              </template>
-            </el-table-column>
-      <el-table-column label="邮箱" prop="tea_email" width="70"/>
+
+      <el-table-column label="邮箱" prop="tea_email" width="190"/>
 
       <el-table-column label="性别" prop="tea_sex" width="70"/>
       <el-table-column label="手机号" prop="tea_mobile" width="140"/>
@@ -108,14 +99,7 @@
           >修改教师密码
           </el-button>
 
-          <el-button
-            v-permission="['system:teainfo:edit']"
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdateImage(scope.row)"
-          >修改/上传图片
-          </el-button>
+
 
 
 
@@ -125,8 +109,6 @@
     <!--    查看教师的学生-->
     <el-table v-loading="loading" :data="stuList" @selection-change="handleSelectionChange" style="margin-top: 5%"
               v-if="noseetea">
-      <el-table-column label="编号" prop="stu_id" width="90"/>
-      <el-table-column label="学生帐号" prop="stu_name" width="90"/>
       <el-table-column label="学生姓名" prop="stu_nick_name" width="90"/>
       <el-table-column label="年龄" prop="stu_age" width="70"/>
       <el-table-column

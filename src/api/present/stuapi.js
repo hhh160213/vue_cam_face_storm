@@ -67,3 +67,36 @@ export function updateImage(stu_id, data) {
     data
   })
 }
+export function stuGetTeaAttend(data) {
+  return request({
+    url: '/stu/inforeqattend',
+    method: 'post',
+    data
+  })
+}
+
+export function stuAttendLocation(data) {
+  return request({
+    url: '/reqattend/tarostulocation',
+    method: 'post',
+    data
+  })
+}
+
+export function stuJudgeIfEXIST(data) {
+  return request({
+    url: '/reqattend/tarojudgeifexist',
+    method: 'post',
+    data
+  })
+}
+
+
+export function stuGetAttendRecords(data) {
+  return request({
+    url: '/face/infoed',
+    method: 'post',
+    data
+  })
+}
+
