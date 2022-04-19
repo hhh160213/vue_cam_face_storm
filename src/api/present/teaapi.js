@@ -104,3 +104,21 @@ export function DelTeaOUtdatedReqAttend(data) {
 }
 
 
+export function DetailAttend(data) {
+  return request({
+    url: '/reqattend/TeaGetStudetailAttendDo',
+    method: 'post',
+    data
+  })
+}
+
+
+export function DetailAttendAllTotal(data) {
+  return request({
+    url: '/reqattend/TeaGetStudetailAttendDoTotal',
+    method: 'post',
+    data
+  })
+}
+
+

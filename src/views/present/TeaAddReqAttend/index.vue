@@ -21,9 +21,10 @@
 
     </el-row>
     <!--    教师查看签到请求的表格-->
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" fit empty-text="暂无数据">
       <el-table-column label="发起人"  align="center" prop="user_nick_name" width="70"/>
       <el-table-column label="签到方式" align="center"  prop="attendTypeCheck" width="120"/>
+      <el-table-column label="开始时间"  align="center" prop="start_time" width="200"/>
       <el-table-column label="截止时间"  align="center" prop="dead_time" width="200"/>
       <el-table-column label="已签到人数" align="center" prop="resp_number" width="100"/>
       <el-table-column label="已签到学生"  align="center" prop="suc_stuname" width="200"/>
@@ -41,11 +42,52 @@
           >删除
           </el-button>
 
+          <el-button
+            v-permission="['present:TeaAddReqAttend:del']"
+            size="mini"
+            type="primary"
+            icon="el-icon-info"
+            @click="handleDeTailRow(scope.row)"
+          >详情
+          </el-button>
+
 
 
         </template>
       </el-table-column>
     </el-table>
+
+    <pagination
+      :total="outtotal"
+      :page="outPageParams.page"
+      :limit="outPageParams.limit"
+      @pagination="handleoutPageChange"
+    />
+
+<!--    嵌套抽屉的学生签到记录详情-->
+    <el-drawer
+      close-on-press-escape
+      show-close
+      title="学生签到记录详情"
+      :visible.sync="tabledwawer"
+      direction="rtl"
+      size="60%">
+      <el-table :data="gridData" max-height="100%" stripe fit >
+        <el-table-column property="stu_nick_name" label="学生姓名" width="100"></el-table-column>
+        <el-table-column property="stu_name" label="学生账号" width="100"></el-table-column>
+        <el-table-column property="attend_type" label="签到方式" width="120"></el-table-column>
+        <el-table-column property="create_time" label="签到时间" width="180"></el-table-column>
+        <el-table-column property="actualLoctaion" label="签到地点" width="180"></el-table-column>
+      </el-table>
+      <pagination
+        :total="total"
+        :page="PageParams.page"
+        :limit="PageParams.limit"
+        :pageSizes="pagesizesss"
+        @pagination="handlePageChange"
+      />
+    </el-drawer>
+
 
 
 <!--    展示地图点选的open选择地图的弹框-->
@@ -136,12 +178,14 @@ CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword&total=5">
 <script>
 import {mapGetters} from 'vuex'
 import TencentMap  from '@/components/TencentMap'
-import { getTeaReqAttend,TeaAddReqAttend,DelTeaReqAttend,DelTeaOUtdatedReqAttend} from '@/api/present/teaapi'
+import { getTeaReqAttend,TeaAddReqAttend,DelTeaReqAttend,DetailAttend,DetailAttendAllTotal} from '@/api/present/teaapi'
 import {MessageBox} from 'element-ui'
 import store from '../../../store'
 import axios from "axios";
 import {sendEmail} from "@/api/system/user";
 import {stueditpwd} from "@/api/present/stuapi";
+import Pagination from '@/components/Pagination'
+
 import moment from 'moment'
 let globalloc;
 window.addEventListener('message', function(event) {
@@ -160,7 +204,8 @@ export default {
 
   name: 'tea',
   components:{
-    TencentMap
+    TencentMap,
+    Pagination
   },
   computed: {
     ...mapGetters([
@@ -172,12 +217,32 @@ export default {
   data() {
 
     return {
+
       noseetea: false,
+      PageParams: {
+        page: 1,
+        limit: 5,
+        sendattends_id:0,
+
+
+      },
+
+            outPageParams: {
+        page: 1,
+        limit: 5,
+              tea_id:0,
+
+
+      },
+
+
       // ifstudent:this.$store.getters.name,
       ifstudent: false,
       avatar: '',
       liststu_id: 0,
-
+      tabledwawer:false,
+      gridData:[],
+      pagesizesss:[3,5],
       ifChooseLocSHow:false,
       // 遮罩层
       loading: true,
@@ -189,6 +254,7 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
+      outtotal: 0,
       // 角色表格数据
       userList: [],
       stuList: [],
@@ -260,14 +326,12 @@ export default {
 
 
         // this.queryParams.stu_name = this.$store.getters.name
-        this.queryParams.tea_id = this.$store.getters.user_id
-        this.form.tea_id = this.$store.getters.user_id
-
-        getTeaReqAttend(this.queryParams).then(
+        this.outPageParams.tea_id = this.$store.getters.user_id
+        getTeaReqAttend(this.outPageParams).then(
           response => {
             console.log(response)
-            this.userList = response.data
-            this.total = response.data.length
+            this.userList = response.data.Arrdata
+            this.outtotal = response.data.total
             this.loading = false
           }
         )
@@ -276,6 +340,19 @@ export default {
       this.loading = true
 
 
+    },
+
+ getPageList(payload) {
+   console.log('payloda',payload)
+
+   DetailAttendAllTotal({sendattends_id:payload.sendattends_id}).then(rep=>{
+      this.total=rep.data.total
+   })
+   DetailAttend(payload).then(response=>{
+     this.gridData=response.data.detaildatarecord
+     // this.total = response.data.total
+     console.log(response)
+   })
     },
 
 
@@ -327,6 +404,17 @@ export default {
 
     },
 
+    handleDeTailRow(row){
+      console.log('handleDeTailRow',row)
+      this.tabledwawer=true
+      this.PageParams.sendattends_id=row.sendattends_id
+      this.getPageList(this.PageParams)
+
+
+
+
+    },
+
 
     /** 新增按钮操作 */
     handleAdd() {
@@ -365,6 +453,20 @@ export default {
       this.ifMapOpen = true
       this.maptitle = '选择位置'
     },
+
+    /** 分页改变 */
+    handlePageChange(arg) {
+      this.PageParams.page = arg.page
+      this.PageParams.limit = arg.limit
+      this.getPageList(this.PageParams)
+    },
+    /** 分页改变 */
+    handleoutPageChange(arg) {
+      this.outPageParams.page = arg.page
+      this.outPageParams.limit = arg.limit
+      this.getList()
+    },
+
 
     handleCheckCloseLocation(){
       console.log(globalloc.poiaddress)

@@ -107,8 +107,15 @@
       </el-table-column>
     </el-table>
     <!--    查看教师的学生-->
+    <el-drawer
+      close-on-press-escape
+      show-close
+      title="查看学生"
+      :visible.sync="noseetea"
+      direction="rtl"
+      size="60%">
     <el-table v-loading="loading" :data="stuList" @selection-change="handleSelectionChange" style="margin-top: 5%"
-              v-if="noseetea">
+             >
       <el-table-column label="学生姓名" prop="stu_nick_name" width="90"/>
       <el-table-column label="年龄" prop="stu_age" width="70"/>
       <el-table-column
@@ -139,6 +146,7 @@
 <!--      </el-table-column>-->
     </el-table>
 
+    </el-drawer>
 
     <!--    教师添加学生的弹框-->
     <el-dialog :title="title" :visible.sync="open" width="500px">
@@ -242,7 +250,7 @@
             <div class="el-upload_text"><em>上传</em></div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="请先下载模板" prop="stu_xls"
+        <el-form-item label="下载模板" prop="stu_xls"
                       v-if="form.action === 'upload-xls'&&form.action!=='add-student'&&form.action!=='edit-tea'&&form.action!=='upload-image'">
 
           <el-button
@@ -250,7 +258,7 @@
             icon="el-icon-download"
             size="mini"
             @click="handleTempXls"
-          >点击下载模板
+          >请先下载模板
           </el-button>
 
 

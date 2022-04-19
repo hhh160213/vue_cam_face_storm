@@ -34,7 +34,7 @@ router.get('/list', (req, res, next) => {
       }
     ],
     where: where,
-    order: [['create_time', 'ASC']]
+    order: [['create_time', 'DESC']]
   }).then(function(logs) {
     return res.json({
       code: 20000,

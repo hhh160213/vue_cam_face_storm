@@ -20,7 +20,7 @@ fs.readdirSync(__dirname).filter((value)=>{
 Allmodel.teainfo.belongsToMany(Allmodel.stuinfo, {
   through: Allmodel.teaandstu,
  foreignKey: 'tea_id',
-  otherKey:'stu_id',
+  // otherKey:'stu_id',
   constraints: false,
 })
 
@@ -29,9 +29,26 @@ Allmodel.teainfo.belongsToMany(Allmodel.stuinfo, {
 Allmodel.stuinfo.belongsToMany(Allmodel.teainfo, {
   through: Allmodel.teaandstu,
   foreignKey: 'stu_id',
-    otherKey:'tea_id',
+    // otherKey:'tea_id',
   constraints: false
 })
+
+
+Allmodel.req_sendattend.hasMany(Allmodel.attend_records, {
+  foreignKey: 'sendattends_id',
+    // otherKey:'stu_id',
+  constraints: false
+})
+
+
+Allmodel.attend_records.belongsTo(Allmodel.req_sendattend, {
+  foreignKey: 'sendattends_id',
+    // otherKey:'stu_id',
+  constraints: false
+})
+
+
+
 
 Allmodel.req_sendattend.belongsToMany(Allmodel.stuinfo, {
   through: Allmodel.reqandstu,
