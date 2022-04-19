@@ -5,6 +5,7 @@ const StuinfoModel = require('./stuinfo')
 const tools = require('../utils/tools')
 const Tea_StuModel = require("./teaandstu");
 const Usermodel = require('./users')
+const AttendRecordModel = require('./attend_records')
 
 
 // 定义表的模型
@@ -21,7 +22,7 @@ const ReqAttendModel = sequelize.define('req_sendattends', {
     type: Sequelize.INTEGER,
   },
   suc_stuid: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING(255)
   },
 
 
@@ -81,6 +82,13 @@ const ReqAttendModel = sequelize.define('req_sendattends', {
   }
 
 })
+
+// ReqAttendModel.hasMany(AttendRecordModel,{
+//   foreignKey: 'sendattends_id',
+//   // sourceKey: 'id',
+//   constraints: false
+//
+// })
 
 ReqAttendModel.TaroAddAttend = async function (data) {
 

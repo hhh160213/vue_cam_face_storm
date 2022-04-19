@@ -1,22 +1,6 @@
 <template>
   <div class="app-container">
 
-    <el-row :gutter="10" class="mb8">
-
-
-      <el-col :span="1.5">
-        <el-button
-          v-permission="['present:TeaAddReqAttend:add']"
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-        >发起签到
-        </el-button>
-      </el-col>
-
-
-    </el-row>
     <!--    学生查看签到请求-->
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column label="发起人" align="center" prop="user_nick_name" width="70"/>
@@ -130,12 +114,22 @@ CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword"
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
+    <pagination
+      :total="total"
+      :page="queryParams.page"
+      :limit="queryParams.limit"
+      @pagination="handlePageChange"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import TencentMap from '@/components/TencentMap'
+import Pagination from '@/components/Pagination'
+
 import { stuGetTeaAttend ,stuJudgeIfEXIST} from '@/api/present/stuapi'
 import { MessageBox } from 'element-ui'
 import store from '../../../store'
@@ -157,7 +151,8 @@ export default {
 
   name: 'tea',
   components: {
-    TencentMap
+    TencentMap,
+    Pagination
   },
   computed: {
     ...mapGetters([
@@ -201,7 +196,9 @@ export default {
         stu_name: '',
         tea_name: '',
         tea_id: 0,
-        stu_nick_name: ''
+        stu_nick_name: '',
+        page:1,
+        limit:5,
       },
       // 表单参数
       form: {
@@ -252,13 +249,12 @@ export default {
 
         // this.queryParams.stu_name = this.$store.getters.name
         this.queryParams.stu_id = this.$store.getters.user_id
-        this.form.tea_id = this.$store.getters.user_id
 
         stuGetTeaAttend(this.queryParams).then(
           response => {
             console.log(response)
-            this.userList = response.data
-            this.total = response.data.length
+            this.userList = response.data.Arrdata
+            this.total = response.data.total
             this.loading = false
           }
         )
@@ -428,6 +424,14 @@ export default {
         })
       })
     },
+
+    /** 分页改变 */
+    handlePageChange(arg) {
+      this.queryParams.page = arg.page
+      this.queryParams.limit = arg.limit
+      this.getList()
+    },
+
 
     /** 提交按钮 */
     submitForm: function() {

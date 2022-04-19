@@ -64,7 +64,7 @@ router.post('/matched', (req, respp, next) => {
             sendattends_id: Number(ATTENDID)
           }
         }).then(findall => {
-          if (findall.dataValues.suc_stuid.toString().includes(stu_id.toString())) {
+          if (findall.dataValues.suc_stuid.includes(stu_id.toString())) {
             console.log('into if false')
             return respp.json({
               code: 40000,
@@ -75,10 +75,11 @@ router.post('/matched', (req, respp, next) => {
           } else {
             orirespNumber = findall.dataValues.resp_number
             sucStuNumArr.push(findall.dataValues.suc_stuname, stu_nick_name)
-            sucStuNumArrID.push(stu_id)
+            sucStuNumArrID.push(findall.dataValues.suc_stuid,stu_id)
             let stringarr = sucStuNumArr.join(',')
             let stringarrid = sucStuNumArrID.join(',')
             console.log(stringarr)
+            console.log(stringarrid)
             orirespNumber++
             updatereq = ReqAttendModel.update({
                 suc_stuname: stringarr,
@@ -94,7 +95,8 @@ router.post('/matched', (req, respp, next) => {
               stu_id: stu_id,
               stu_name: picName,
               attend_type: '人脸识别签到',
-              stu_nick_name: stu_nick_name
+              stu_nick_name: stu_nick_name,
+              sendattends_id: Number(ATTENDID),
             })
             attresult.then(ret => {
               if (ret) {
@@ -170,6 +172,41 @@ router.post('/list', (req, res, next) => {
   })
 })
 
+router.post('/detaildo', (req, res, next) => {
+
+  const sendattends_id = req.body.sendattends_id
+
+  console.log(req.body)
+  let project = AttendModel.findAll({
+    include: [
+      {model: ReqAttendModel}
+    ],
+    where: {
+      sendattends_id: Number(sendattends_id)
+    },
+
+  });
+
+  project.then(function (ReqAttend) {
+    if (ReqAttend) {
+      return res.send({
+        code: 20000,
+        message: '获取签到请求消息详情成功face',
+        data: ReqAttend
+      })
+    } else {
+      return res.send({
+        code: 40000,
+        message: '获取签到请求失败',
+        data: '签到id不存在'
+      })
+    }
+  })
+
+})
+
+
+
 //通过post方式stu_id获取单个学生的api
 router.post('/infoed', (req, res, next) => {
   console.log(req.body)
@@ -194,6 +231,8 @@ router.post('/infoed', (req, res, next) => {
   let project = AttendModel.findAndCountAll({
     offset: offset || 1,
     limit: parseInt(req.body.limit) || 5,
+    order: [['create_time', 'DESC']],
+
     where: {
       stu_id: stu_id,
       create_time

@@ -16,31 +16,6 @@ const sqlQuery = require("../model/config");
 let sendmail = require('../utils/sendMail')
 const XLSX = require("xlsx");
 const Tea_StuModel = require("../model/teaandstu");
-const styles = {
-  'bold': ['\x1B[1m', '\x1B[22m'],
-  'italic': ['\x1B[3m', '\x1B[23m'],
-  'underline': ['\x1B[4m', '\x1B[24m'],
-  'inverse': ['\x1B[7m', '\x1B[27m'],
-  'strikethrough': ['\x1B[9m', '\x1B[29m'],
-  'white': ['\x1B[37m', '\x1B[39m'],
-  'grey': ['\x1B[90m', '\x1B[39m'],
-  'black': ['\x1B[30m', '\x1B[39m'],
-  'blue': ['\x1B[34m', '\x1B[39m'],
-  'cyan': ['\x1B[36m', '\x1B[39m'],
-  'green': ['\x1B[32m', '\x1B[39m'],
-  'magenta': ['\x1B[35m', '\x1B[39m'],
-  'red': ['\x1B[31m', '\x1B[39m'],
-  'yellow': ['\x1B[33m', '\x1B[39m'],
-  'whiteBG': ['\x1B[47m', '\x1B[49m'],
-  'greyBG': ['\x1B[49;5;8m', '\x1B[49m'],
-  'blackBG': ['\x1B[40m', '\x1B[49m'],
-  'blueBG': ['\x1B[44m', '\x1B[49m'],
-  'cyanBG': ['\x1B[46m', '\x1B[49m'],
-  'greenBG': ['\x1B[42m', '\x1B[49m'],
-  'magentaBG': ['\x1B[45m', '\x1B[49m'],
-  'redBG': ['\x1B[41m', '\x1B[49m'],
-  'yellowBG': ['\x1B[43m', '\x1B[49m']
-}
 const checkemail = {} //声明一个对象缓存邮箱和验证码，留着
 
 
@@ -64,7 +39,7 @@ router.post('/info', (req, res, next) => {
       let stuarr = [tea_stu]
       return res.json({
         code: 20000,
-        message: '获取单个教师信息成功',
+        message: '获取单个教师信息以及其下学生成功info',
         data: stuarr
       })
     } else {
@@ -88,14 +63,14 @@ router.post('/list', (req, res, next) => {
   }).then(function (tea_stu) {
     return res.json({
       code: 20000,
-      message: '获取全部教师信息成功',
+      message: '获取全部教师信息以及学生成功list',
       data: tea_stu
     })
   })
 })
 
 
-//发送邮箱验证码
+//教师发送邮箱验证码
 router.post('/sendmailtea', async (req, res, next) => {
   console.log(req.body)
   let mail = req.body.email
@@ -253,7 +228,7 @@ router.post('/editpwded', (req, res, next) => {
 })
 
 
-//批量上传教师信息
+//高层批量上传教师信息
 router.post('/addteainfobyxls', (req, res, next) => {
   console.log(req.body)
   var form = new formidable.IncomingForm();
@@ -354,7 +329,7 @@ router.post('/addteainfobyxls', (req, res, next) => {
 })
 
 
-//修改上传教师图片
+//修改上传教师图片(可无)
 router.post('/uploadimage', (req, res, next) => {
 
 
@@ -425,7 +400,7 @@ n.jpg*/
 })
 
 
-//单个添加教师信息
+//高层单个添加教师信息
 router.post('/addteabyuser', async (req, res, next) => {
   console.log(req.body)
   let {
@@ -542,6 +517,9 @@ router.post('/addteabyuser', async (req, res, next) => {
 
 })
 
+/*教师
+* 修改个人信息
+* */
 router.post('/edit', async (req, res, next) => {
   console.log(req.body)
   const result = TeainfoModel.updateTea(req.body)
@@ -570,6 +548,7 @@ router.post('/edit', async (req, res, next) => {
 })
 
 
+/*删除教师信息，根据id*/
 router.post('/del', (req, res, next) => {
   const tea_id = req.body.tea_id
   let result = TeainfoModel.delTea(tea_id || [])
@@ -595,57 +574,6 @@ router.post('/del', (req, res, next) => {
 
 })
 
-router.post('/uploadimage', (req, res, next) => {
 
-
-  let form = new formidable.IncomingForm()
-  form.encoding = 'utf-8' // 编码
-  form.keepExtensions = true // 保留扩展名
-  form.uploadDir = path.join(__dirname, '../public/images/face') //文件存储路径 最后要注意加 '/' 否则会被存在public下
-  form.parse(req, (err, fileds, files) => { // 解析 formData 数据
-    console.log(fileds) //{ name: 'stua' }
-    console.log(files)
-    if (err) return next(err)
-    modiuid = fileds.mystu_id
-    username = fileds.name //用户名 用于修改用户头像路径
-    console.log(username)  //stua
-    let oldPath = files.file.filepath //获取文件路径 ~/public/images/<随机生成的文件名>.<扩展名>
-    console.log(oldPath)   /*D:\Develop\face_recog\1219express\vue-element-admin-express\server\public\images\face\cbfd9c53d3071f2d3cfaddc00
-n.jpg*/
-    let imgname = files.file.originalFilename //前台上传时的文件名 也就是文件原本的名字
-    console.log(imgname)   //D:\Develop\face_recog\1219express\vue-element-admin-express\server\public\images\face\cbfd9c53d3071f2d3cfaddc00
-// n.jpg
-    let userImgname = imgname.replace(/[^.]+/, username) //把扩展名前的文件名给替换掉
-    console.log(userImgname)  //stua.jpg
-    sinaname = "http://127.0.0.1:8002/public/images/face/" + userImgname
-    console.log(sinaname)
-    //我这里为了方便存储 统一将文件名改为 <用户名>.jpg
-    let newPath = path.join(path.dirname(oldPath), userImgname)
-    console.log(newPath) //D:\Develop\face_recog\1219express\vue-element-admin-express\server\public\images\face\stua.jpg
-    fs.rename(oldPath, newPath, async (err) => {
-      if (err) return next(err)
-
-
-    })
-
-  })
-  const sturesult = TeainfoModel.updateImage(sinaname, modiuid)
-  sturesult.then(function (student) {
-    if (student !== true) {
-      return res.json({
-        code: 40000,
-        message: '教师图片上传失败',
-        data: student
-      })
-    }
-    return res.json({
-      code: 20000,
-      message: '教师上传图片成功',
-      data: student
-    })
-  }).catch(e => {
-    return e
-  })
-})
 
 module.exports = router

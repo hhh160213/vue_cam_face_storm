@@ -64,6 +64,24 @@ router.post('/info', (req, res, next) => {
 })
 //通过post方式stu_id获取单个学生的api
 router.post('/inforeqattend', (req, res, next) => {
+  console.log(req.body)
+  if (req.body.page <= 0) {
+    req.body.page = 1
+  }
+  if (req.body.limit > 50) {
+    req.body.limit = 50
+
+  }
+  let create_time = {}
+  if (req.body.date && req.body.date.length === 2) {
+    create_time =
+      {
+        [Op.between]: req.body.date
+      }
+
+  }
+  const offset = (req.body.page - 1) * req.body.limit
+
   const stu_id = req.body.stu_id
   let project = StuinfoModel.findOne({
     attributes: {exclude: ['password']},
@@ -85,7 +103,10 @@ router.post('/inforeqattend', (req, res, next) => {
         teaidsmany = teaitem.tea_id
         teadidarr.push(teaidsmany)
         console.log(teaidsmany)
-        reqproject = ReqAttendModel.findAll({
+        reqproject = ReqAttendModel.findAndCountAll({
+          offset: offset || 1,
+          limit: parseInt(req.body.limit) || 5,
+          order: [['dead_time', 'DESC']],
           where: {
             tea_id: teaidsmany
           },
@@ -94,8 +115,13 @@ router.post('/inforeqattend', (req, res, next) => {
           if (ReqAttend) {
             return res.json({
               code: 20000,
-              message: '学生获取绑定教师教师签到请求成功略略略',
-              data: ReqAttend,
+              message: '学生获取绑定教师教师签到请求成功略略略taro',
+              data: {
+                total:ReqAttend.count,
+                Arrdata:ReqAttend.rows
+
+
+              },
               teaidsmany,
               teadidarr,
             })
@@ -107,12 +133,7 @@ router.post('/inforeqattend', (req, res, next) => {
             })
           }
         })
-
-
       })
-
-
-
 
     }
   })
@@ -173,8 +194,7 @@ router.post('/list', (req, res, next) => {
     })
   })
 })
-//获取全部学学生的apui
-
+//获取全部学生的签到请求
 router.post('/listreqattend', (req, res, next) => {
 
   StuinfoModel.findAll({
@@ -321,6 +341,10 @@ router.post('/add', (req, res, next) => {
     }
   })
 })
+
+/*
+* 批量添加学生  通过xls表格进行导入
+* */
 router.post('/addbyxls', (req, res, next) => {
   var form = new formidable.IncomingForm();
   var xlsxJson;
@@ -448,6 +472,9 @@ router.post('/addbyxls', (req, res, next) => {
 
 })
 
+/*
+* 编辑学生信息
+* */
 router.post('/edit', async (req, res, next) => {
   // const stu_id = req.body.stu_id
   // console.log(stu_id)
@@ -483,6 +510,9 @@ router.post('/edit', async (req, res, next) => {
   })
 })
 
+/*
+* 删除学生信息
+* */
 router.post('/del', (req, res, next) => {
   const stu_ids = req.body.stu_id
   let result = StuinfoModel.delStu(stu_ids || [])
@@ -622,6 +652,9 @@ router.post('/editpwded', (req, res, next) => {
 })
 
 
+/*
+* 上传图片，修改图片
+* */
 router.post('/uploadimage', (req, res, next) => {
 
   console.log(req.body)

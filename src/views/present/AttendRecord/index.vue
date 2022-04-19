@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="queryForm" :model="queryParams" :inline="true">
-      <el-form-item label="登录时间">
+      <el-form-item label="时间">
         <el-date-picker
           v-model="dateRange"
           size="small"
@@ -50,6 +50,7 @@
 <script>
 import { stuGetAttendRecords} from '@/api/present/stuapi'
 import Pagination from '@/components/Pagination'
+import moment from 'moment'
 export default {
   name: 'Log',
   components: { Pagination },
@@ -63,7 +64,7 @@ export default {
       // 非多个禁用
       multiple: true,
       // 日期
-      dateRange: [],
+      dateRange: [moment().subtract(30,'days').format('YYYY-MM-DD'),moment().add(30, 'days').format('YYYY-MM-DD')],
       // 查询参数
       queryParams: {
         page: 1,

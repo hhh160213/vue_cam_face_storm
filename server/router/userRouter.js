@@ -13,33 +13,8 @@ let sendmail = require('../utils/sendMail')
 
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-const styles = {
-  'bold': ['\x1B[1m', '\x1B[22m'],
-  'italic': ['\x1B[3m', '\x1B[23m'],
-  'underline': ['\x1B[4m', '\x1B[24m'],
-  'inverse': ['\x1B[7m', '\x1B[27m'],
-  'strikethrough': ['\x1B[9m', '\x1B[29m'],
-  'white': ['\x1B[37m', '\x1B[39m'],
-  'grey': ['\x1B[90m', '\x1B[39m'],
-  'black': ['\x1B[30m', '\x1B[39m'],
-  'blue': ['\x1B[34m', '\x1B[39m'],
-  'cyan': ['\x1B[36m', '\x1B[39m'],
-  'green': ['\x1B[32m', '\x1B[39m'],
-  'magenta': ['\x1B[35m', '\x1B[39m'],
-  'red': ['\x1B[31m', '\x1B[39m'],
-  'yellow': ['\x1B[33m', '\x1B[39m'],
-  'whiteBG': ['\x1B[47m', '\x1B[49m'],
-  'greyBG': ['\x1B[49;5;8m', '\x1B[49m'],
-  'blackBG': ['\x1B[40m', '\x1B[49m'],
-  'blueBG': ['\x1B[44m', '\x1B[49m'],
-  'cyanBG': ['\x1B[46m', '\x1B[49m'],
-  'greenBG': ['\x1B[42m', '\x1B[49m'],
-  'magentaBG': ['\x1B[45m', '\x1B[49m'],
-  'redBG': ['\x1B[41m', '\x1B[49m'],
-  'yellowBG': ['\x1B[43m', '\x1B[49m']
-}
 /**
- * 登录
+ * 登录接口
  */
 router.post('/login', (req, res, next) => {
 
@@ -113,6 +88,9 @@ router.post('/login', (req, res, next) => {
   })
 })
 
+/*
+* 获取个人信息
+* */
 router.get('/info', (req, res, next) => {
 
 
@@ -178,6 +156,10 @@ router.get('/info', (req, res, next) => {
 
 
 })
+
+/*
+* 获取个人信息小程序
+* */
 router.post('/infotaro', (req, res, next) => {
 
   console.log(req.body)
@@ -260,6 +242,9 @@ router.post('/infotaro', (req, res, next) => {
 
 })
 
+/*登出接口前端完成
+*
+* */
 router.post('/logout', (req, res, next) => {
   return res.json({
     code: 20000,
@@ -269,7 +254,9 @@ router.post('/logout', (req, res, next) => {
 })
 
 
-//发送邮箱验证码
+/*
+* 学生发送邮箱验证码
+* */
 router.post('/sendmail', (req, res, next) => {
   console.log(req.body)
   let mail = req.body.email
@@ -322,6 +309,9 @@ router.post('/sendmail', (req, res, next) => {
 
 
 
+/*
+* 获取所有的用户
+* */
 router.get('/list', (req, res, next) => {
   if (req.query.page <= 0) {
     req.query.page = 1
@@ -361,6 +351,8 @@ router.get('/list', (req, res, next) => {
     })
   })
 })
+/*
+* 获取用户post版本，使用分页*/
 router.post('/listdo', (req, res, next) => {
 
   console.log(req.body)
@@ -372,14 +364,7 @@ router.post('/listdo', (req, res, next) => {
     req.body.limit = 50
 
   }
-  let create_time = {}
-  if (req.body.date && req.body.date.length === 2) {
-    create_time =
-      {
-        [Op.between]: req.body.date
-      }
 
-  }
   const offset = (req.body.page - 1) * req.body.limit
 
 
@@ -402,11 +387,11 @@ router.post('/listdo', (req, res, next) => {
         total: user_roles.count,
         user_roles: user_roles.rows,
       }
-      // length:
     })
   })
 })
 
+/*添加角色，授权，分配*/
 router.post('/add', (req, res, next) => {
   if (req.body.password !== req.body.repassword) {
     return res.json({
@@ -486,6 +471,9 @@ router.post('/add', (req, res, next) => {
   })
 })
 
+/*
+* 编辑用户信息
+* */
 router.post('/edit', (req, res, next) => {
   const user_id = req.query.user_id
   req.body.password = undefined
@@ -507,6 +495,7 @@ router.post('/edit', (req, res, next) => {
   })
 })
 
+/*删除用户信息*/
 router.post('/del', (req, res, next) => {
   const user_ids = req.body
   UsersModel.delUser(user_ids || []).then(function (user) {
@@ -525,6 +514,10 @@ router.post('/del', (req, res, next) => {
   })
 })
 
+/*修改密码
+* 通过验证原来密码
+*
+* */
 router.post('/edit-pwd', (req, res, next) => {
   if (req.body.password !== req.body.repassword) {
     return res.json({

@@ -115,8 +115,15 @@
     </el-table>
 
     <!--    查看学生的个人教师-->
+    <el-drawer
+      close-on-press-escape
+      show-close
+      title="查看教师"
+      :visible.sync="noseetea"
+      direction="rtl"
+      size="60%">
     <el-table v-loading="loading" :data="teaList" @selection-change="handleSelectionChange" style="margin-top: 5%"
-              v-if="noseetea">
+              >
       <el-table-column label="年龄" prop="tea_age" width="70"/>
 
       <el-table-column label="性别" prop="tea_sex" width="70"/>
@@ -137,6 +144,7 @@
         </template>
       </el-table-column>
     </el-table>
+    </el-drawer>
 
     <!-- 修改学生个人信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px">

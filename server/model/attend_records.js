@@ -7,6 +7,7 @@ const Tea_StuModel = require('./teaandstu')
 const tools = require('../utils/tools')
 const UsersRolesModel = require("./usersandroles");
 const RolesModel = require("./rolesmodel");
+const ReqAttendodel = require("./req_sendattend");
 
 
 
@@ -19,6 +20,10 @@ const AttendModel = sequelize.define('attend_records', {
   },
 
   stu_id: {
+    type: Sequelize.INTEGER,
+  },
+
+  sendattends_id: {
     type: Sequelize.INTEGER,
   },
 
@@ -58,6 +63,13 @@ const AttendModel = sequelize.define('attend_records', {
 
 })
 
+// AttendModel.bulkUpdate()
+
+// AttendModel.belongsTo(ReqAttendodel,{
+//   foreignKey: 'sendattends_id',
+//   // sourceKey: 'id',
+//   constraints: false
+// })
 AttendModel.addRecord = async function (stu_id,picName) {
   const t = await sequelize.transaction()
   try {
