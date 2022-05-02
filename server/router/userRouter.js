@@ -163,7 +163,7 @@ router.get('/info', (req, res, next) => {
 router.post('/infotaro', (req, res, next) => {
 
   console.log(req.body)
-  const user_id = req.body.user_id
+  const user_id = Number( req.body.user_id)
   UsersModel.findOne({
     attributes: {exclude: ['password']},
     include: [

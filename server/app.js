@@ -180,6 +180,7 @@ app.use(expressJwt({
   path: [
     '/',
     '/user/login',
+    '/user/infotaro',
     '/stu/uploadimage',
     '/stu/addbyxls',
     '/tea/uploadimage',
