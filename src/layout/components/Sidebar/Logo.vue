@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       title: '校园智能管理系统',
-      logo: 'http://127.0.0.1:8002/public/images/face/school.png'
+      logo: 'https://p4k3652859.hsk.top/public/images/face/school.png'
     }
   }
 }

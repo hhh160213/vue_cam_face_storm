@@ -143,7 +143,7 @@ router.get('/info', (req, res, next) => {
             user_nick_name: user_nick_name,
             name: user_roles.user_name,
             // avatar: 'https://s1.ax1x.com/2020/05/25/tp7UWF.gif',
-            avatar: 'http://127.0.0.1:8002/public/images/face/school.png',
+            avatar: 'https://p4k3652859.hsk.top/public/images/face/school.png',
             menus: menus,
             buttons: buttons
           }

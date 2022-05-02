@@ -21,3 +21,7 @@ export function logout() {
     method: 'post'
   })
 }
+
+
+//内网穿透
+//lt -s midea  -p 9528

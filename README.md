@@ -1,5 +1,5 @@
 # 使用vue+express校园考勤项目
-
+lt -s midea  -p 9528
 [TOC]
 
 ## 一、vue开发环境搭建

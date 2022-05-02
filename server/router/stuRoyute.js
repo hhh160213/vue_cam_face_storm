@@ -139,39 +139,6 @@ router.post('/inforeqattend', (req, res, next) => {
   })
 })
 
-router.post('/testnew', (req, res, next) => {
-  const stu_id = req.body.stu_id
-  let project = StuinfoModel.findOne({
-    attributes: ['ran_code'],
-    include: [
-      {model: TeainfoModel}
-    ],
-    where: {
-      stu_id: stu_id
-    }
-  });
-  project.then(function (tea_stu) {
-    console.log(tea_stu)
-    console.log(tea_stu.dataValues)
-    console.log(tea_stu.dataValues.ran_code)
-    if (tea_stu !== null) {
-
-
-      let stuarr = [tea_stu]
-      return res.json({
-        code: 20000,
-        message: '获取单个学生信息成功',
-        data: stuarr
-      })
-    } else {
-      return res.json({
-        code: 400,
-        message: '获取单个学生信息失败',
-        data: '该学生id不存在'
-      })
-    }
-  })
-})
 
 
 //获取全部学学生的apui
@@ -194,23 +161,7 @@ router.post('/list', (req, res, next) => {
     })
   })
 })
-//获取全部学生的签到请求
-router.post('/listreqattend', (req, res, next) => {
 
-  StuinfoModel.findAll({
-    attributes: {exclude: ['password']},
-    include: [
-      {model: ReqMOdel}
-    ],
-    where: req.query
-  }).then(function (tea_stu) {
-    return res.json({
-      code: 20000,
-      message: '获取全部学生信息成功',
-      data: tea_stu
-    })
-  })
-})
 
 
 router.post('/tests', async (req, res, next) => {
@@ -679,13 +630,13 @@ n.jpg*/
     let userImgname = imgname.replace(/[^.]+/, username) //把扩展名前的文件名给替换掉
     console.log(userImgname,'userImgname')  //stua.jpg
     if (userImgname.includes('jpg') || userImgname.includes('png')) {
-      sinaname = "http://4365285ek9.zicp.vip/public/images/face/" + userImgname
+      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 
     } else {
       userImgname = userImgname + ".jpg"
-      sinaname = "http://4365285ek9.zicp.vip/public/images/face/" + userImgname
+      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 

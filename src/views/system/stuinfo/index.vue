@@ -183,7 +183,7 @@
 
 
         <el-form-item label="修改图片" prop="stu_pic" v-if="form.action === 'upload-image'&& form.action !== 'edit-pwd'&&form.action !== 'email-pwd'">
-          <el-upload drag action="http://127.0.0.1:8002/stu/uploadimage" multiple list-type="picture"
+          <el-upload drag action="https://p4k3652859.hsk.top/stu/uploadimage" multiple list-type="picture"
                      class="image-uploader"
                      :data="uploadData"
                      :show-file-list="false"

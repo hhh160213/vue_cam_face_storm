@@ -357,14 +357,14 @@ n.jpg*/
     console.log(userImgname)  //stua.jpg
     if (userImgname.includes('jpg')||userImgname.includes('png'))
     {
-      sinaname = "http://127.0.0.1:8002/public/images/face/" + userImgname
+      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 
     }
     else {
       userImgname=userImgname+".jpg"
-      sinaname = "http://127.0.0.1:8002/public/images/face/" + userImgname
+      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 

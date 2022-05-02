@@ -68,74 +68,6 @@ router.post('/taroteadelAttend', (req, res, next) => {
     }
   })
 
-  // let project = ReqAttendModel.findOne({
-  //   where: {
-  //     tea_id: addparam.tea_id
-  //   },
-  //
-  // });
-  // project.then( async function (ReqAttend) {
-  //   if (ReqAttend===null)
-  //   {
-  //     await
-  //   }
-  //   else if(ReqAttend){
-  //
-  //     return res.json({
-  //       code: 40000,
-  //       message: '发布失败,当前只能存在一条签到，请先删除后重试！',
-  //       data: ReqAttend
-  //     })
-  //   }
-  // })
-
-})
-/*
-* 判断签到类型
-*
-* */
-router.post('/tarojudgeAttendType', (req, res, next) => {
-
-  console.log(req.body)
-  let { dead_time } = req.body
-
-  ReqAttendModel.delSingleId(sendattends_id).then(ReqAttend => {
-    if (!ReqAttend) {
-      return res.json({
-        code: 40000,
-        message: `删除失败，请重试`,
-        data: ReqAttend
-      })
-    } else {
-      return res.json({
-        code: 20000,
-        message: `成功删除签到请求`,
-        data: ReqAttend
-      })
-    }
-  })
-
-  // let project = ReqAttendModel.findOne({
-  //   where: {
-  //     tea_id: addparam.tea_id
-  //   },
-  //
-  // });
-  // project.then( async function (ReqAttend) {
-  //   if (ReqAttend===null)
-  //   {
-  //     await
-  //   }
-  //   else if(ReqAttend){
-  //
-  //     return res.json({
-  //       code: 40000,
-  //       message: '发布失败,当前只能存在一条签到，请先删除后重试！',
-  //       data: ReqAttend
-  //     })
-  //   }
-  // })
-
 })
 
 /*
@@ -354,40 +286,7 @@ router.post('/tarosearch', (req, res, next) => {
   })
 
 })
-/*
-* 好像没用上
-* */
-router.post('/tarosearchstu', (req, res, next) => {
 
-  const stu_id = req.body.stu_id
-
-  let project = ReqAttendModel.findAll({
-    include: [
-      { model: StuinfoModel }
-    ],
-    where: {
-      stu_id: stu_id
-    }
-
-  })
-
-  project.then(function(ReqAttend) {
-    if (ReqAttend) {
-      return res.send({
-        code: 20000,
-        message: '获取指定教师签到请求成功',
-        data: ReqAttend
-      })
-    } else {
-      return res.send({
-        code: 40000,
-        message: '获取教师签到请求失败',
-        data: '该教师id不存在'
-      })
-    }
-  })
-
-})
 
 /*
 * 查看某条签到请求的详情学生签到记录
@@ -406,12 +305,12 @@ router.post('/TeaGetStudetailAttendDo', (req, res, next) => {
 
   }
 
-  const offset = (req.body.page - 1) * req.body.limit
+  const offset = Number( (req.body.page - 1) * req.body.limit)
   let project = ReqAttendModel.findAndCountAll({
     include: [
       { model: AttendModel ,
-        offset: offset || 1,
-        limit: parseInt(req.body.limit) || 5,
+        offset: offset || 0,
+        limit: parseInt(req.body.limit) || 3,
       },
 
     ],
@@ -431,7 +330,7 @@ router.post('/TeaGetStudetailAttendDo', (req, res, next) => {
 
           total: ReqAttend.rows[0].attend_records.length,
           rowsdatalength: ReqAttend.rows.length,
-          rowsgth: ReqAttend,
+          // rowsgth: ReqAttend,
           detaildatarecord: ReqAttend.rows[0].attend_records,
           rowsdata: ReqAttend.rows,
 
@@ -474,11 +373,15 @@ router.post('/TeaGetStudetailAttendDoTotal', (req, res, next) => {
 
   project.then(function(ReqAttend) {
     if (ReqAttend) {
+      // ReqAttend.count===1?ReqAttend.count=0:ReqAttend.count
       return res.send({
         code: 20000,
         message: '获取签到请求消息详情成功ReqAttend',
         data: {
-          total:ReqAttend.count
+          total:ReqAttend.rows[0].attend_records.length,
+          Attendtotal:ReqAttend.count,
+          alldata:ReqAttend,
+
         }
       })
     } else {
@@ -506,7 +409,14 @@ router.post('/tarojudgeifexist', (req, res, next) => {
       sendattends_id: Number(ATTENDID)
     }
   }).then(findone => {
-    console.log(findone.dataValues)
+    console.log(findone)
+    if (findone===''||findone===undefined||findone===null){
+      return res.json({
+        code: 40000,
+        message: `系统出错,没有该条签到记录！`,
+        data: findone
+      })
+    }
     if (findone.dataValues.suc_stuid.includes(stu_id.toString())) {
       return res.json({
         code: 40000,
@@ -514,7 +424,11 @@ router.post('/tarojudgeifexist', (req, res, next) => {
         data: findone
       })
 
-    } else {
+    }
+
+
+
+    else {
       return res.json({
         code: 20000,
         message: `即将进行签到操作`,
@@ -525,75 +439,6 @@ router.post('/tarojudgeifexist', (req, res, next) => {
   })
 
 })
-/*
-* 一键删除过期请求，没用上
-* */
-router.post('/tarodeloutdate', (req, res, next) => {
 
-  console.log(req.body)
-  const tea_id = req.body.tea_id
-  // await ReqAttendModel.destroy({
-  //   where: {
-  //     tea_id: tea_id,
-  //     dead_time:{
-  //       [Op.lt]: new Date(),
-  //       // [Op.lt]: nowdate,
-  //     }
-  //   }
-  // }).then(function (succ) {
-  //   if (succ) {
-  //     return res.send({
-  //       code: 20000,
-  //       message: '删除成功',
-  //       data: succ
-  //     })
-  //   } else {
-  //     return res.send({
-  //       code: 40000,
-  //       message: '没有签到请求可以删除',
-  //       data: succ
-  //     })
-  //   }
-  // })
-
-  /*  let project = ReqAttendModel.findAll({
-      where: {
-        user_id: user_id
-      },
-      attributes: ['start_time', 'dead_time']
-
-    });*/
-
-  /*
-    project.then( function (ReqAttend) {
-      if (ReqAttend) {
-        let fend_time
-        let fend_time_unix
-        let now_time_unix
-          ReqAttend.map( async  (reqitem)=>{
-            /!*从数据库中拿到的格式化后的截止时间*!/
-            fend_time=moment(reqitem.dataValues.dead_time).format('YYYY-MM-DD HH:mm:ss')
-            console.log(fend_time)
-            now_time_unix=moment().unix()
-            if (Number(now_time_unix)>Number(fend_time_unix))
-            {
-
-
-
-
-
-            }
-          })
-
-     /!*   return res.send({
-          code: 20000,
-          message: '获取指定教师签到请求成功',
-          data: ReqAttend
-        })*!/
-      }
-    })
-  */
-
-})
 
 module.exports = router

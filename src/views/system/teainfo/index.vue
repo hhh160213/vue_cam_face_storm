@@ -239,7 +239,7 @@
 <!--        批量添加学生信息-->
         <el-form-item label="上传xls" prop="stu_xls"
                       v-if="form.action === 'upload-xls'&&form.action!=='add-student'&&form.action!=='edit-tea'&&form.action!=='upload-image'">
-          <el-upload drag action="http://127.0.0.1:8002/stu/addbyxls"
+          <el-upload drag action="https://p4k3652859.hsk.top/stu/addbyxls"
                      ref="upload"
                      class="image-uploader"
                      :show-file-list="false"
@@ -266,7 +266,7 @@
 
 <!--        修改教师图片信息-->
         <el-form-item label="修改图片" prop="tea_pic" v-if="form.action === 'upload-image'&& form.action !== 'edit-pwd'&&form.action !== 'email-pwd'">
-          <el-upload drag action="http://127.0.0.1:8002/tea/uploadimage" multiple list-type="picture"
+          <el-upload drag action="https://p4k3652859.hsk.top/tea/uploadimage" multiple list-type="picture"
                      class="image-uploader"
                      :data="uploadData"
                      :show-file-list="false"
@@ -755,7 +755,7 @@ export default {
 
     //下载xls模板进行的按钮操作
     handleTempXls(){
-      window.open('http://localhost:8002/public/xlstempfile/stu_multiply_template.xls'
+      window.open('https://p4k3652859.hsk.top/public/xlstempfile/stu_multiply_template.xls'
       )
 
 

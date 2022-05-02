@@ -218,6 +218,6 @@ app.use(bodyParse.json()) // 指定post请求的数据为json数据
 const port = 8002
 const hostname = '127.0.0.1'
 app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`)
+  console.log(`服务器数据库已经在端口 at http://${hostname}:${port}/`)
 })
 
