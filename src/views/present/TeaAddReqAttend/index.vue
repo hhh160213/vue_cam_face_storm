@@ -91,7 +91,7 @@
 
       <iframe id="mapPage" width="100%" height="600px" frameborder="0"
               src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&policy=1&radius=300&key=
-W74ME-JMFPB&referer=unikeyword&total=5"
+CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword&total=5"
       >
       </iframe>
 
