@@ -113,7 +113,7 @@
       title="查看学生"
       :visible.sync="noseetea"
       direction="rtl"
-      size="60%">
+      size="45%">
     <el-table v-loading="loading" :data="stuList" @selection-change="handleSelectionChange" style="margin-top: 5%"
              >
       <el-table-column label="学生姓名" prop="stu_nick_name" width="90"/>
@@ -239,7 +239,7 @@
 <!--        批量添加学生信息-->
         <el-form-item label="上传xls" prop="stu_xls"
                       v-if="form.action === 'upload-xls'&&form.action!=='add-student'&&form.action!=='edit-tea'&&form.action!=='upload-image'">
-          <el-upload drag action="https://p4k3652859.hsk.top/stu/addbyxls"
+          <el-upload drag action="/stu/addbyxls"
                      ref="upload"
                      class="image-uploader"
                      :show-file-list="false"
@@ -266,7 +266,7 @@
 
 <!--        修改教师图片信息-->
         <el-form-item label="修改图片" prop="tea_pic" v-if="form.action === 'upload-image'&& form.action !== 'edit-pwd'&&form.action !== 'email-pwd'">
-          <el-upload drag action="https://p4k3652859.hsk.top/tea/uploadimage" multiple list-type="picture"
+          <el-upload drag action="tea/uploadimage" multiple list-type="picture"
                      class="image-uploader"
                      :data="uploadData"
                      :show-file-list="false"
@@ -755,7 +755,7 @@ export default {
 
     //下载xls模板进行的按钮操作
     handleTempXls(){
-      window.open('https://p4k3652859.hsk.top/public/xlstempfile/stu_multiply_template.xls'
+      window.open('/public/xlstempfile/stu_multiply_template.xls'
       )
 
 

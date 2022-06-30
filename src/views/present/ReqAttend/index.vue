@@ -30,7 +30,7 @@
 
       <iframe id="mapPage" width="100%" height="600px" frameborder="0"
               src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=
-CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword"
+JMFPB&referer=unikeyword"
       >
       </iframe>
 

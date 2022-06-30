@@ -56,7 +56,7 @@ router.post('/login', (req, res, next) => {
         },
         'express',
         {
-          expiresIn: 7200000 * 2
+          expiresIn: 7200 * 2
         }
       )
 
@@ -143,7 +143,7 @@ router.get('/info', (req, res, next) => {
             user_nick_name: user_nick_name,
             name: user_roles.user_name,
             // avatar: 'https://s1.ax1x.com/2020/05/25/tp7UWF.gif',
-            avatar: 'https://p4k3652859.hsk.top/public/images/face/school.png',
+            avatar: 'face/school.png',
             menus: menus,
             buttons: buttons
           }
@@ -333,7 +333,7 @@ router.get('/list', (req, res, next) => {
 
   UsersModel.findAndCountAll({
     attributes: {exclude: ['password']},
-    offset: offset || 1,
+    offset: offset || 0,
     limit: parseInt(req.query.limit) || 5,
     include: [
       {model: RolesModel}
@@ -370,7 +370,7 @@ router.post('/listdo', (req, res, next) => {
 
   UsersModel.findAndCountAll({
     attributes: {exclude: ['password']},
-    offset: offset || 1,
+    offset: offset || 0,
     limit: parseInt(req.body.limit) || 5,
     include: [
       {model: RolesModel}

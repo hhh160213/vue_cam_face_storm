@@ -255,7 +255,7 @@ router.post('/tarosearch', (req, res, next) => {
   const tea_id = req.body.tea_id
 
   let project = ReqAttendModel.findAndCountAll({
-    offset: offset || 1,
+    offset: offset || 0,
     limit: parseInt(req.body.limit) || 5,
     order: [['dead_time', 'DESC']],
     where: {

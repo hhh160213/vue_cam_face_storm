@@ -17,9 +17,9 @@ const TeainfoModel = require('../model/teainfo')
 const AipFace = require('baidu-aip-sdk').face
 
 // 百度人脸识别应用的APP_ID、API_KEY、SECRET_KEY
-const APP_ID = '25370554'
-const API_KEY = 'EAsNwwrOZhGWd8RGyClw4M1Z'
-const SECRET_KEY = 'aGSjpyHwQxz5N7QF9dRaw2WsPWs92MCS'
+const APP_ID = ''
+const API_KEY = ''
+const SECRET_KEY = ''
 const client = new AipFace(APP_ID, API_KEY, SECRET_KEY)
 
 //人脸识别部分
@@ -32,20 +32,20 @@ router.post('/matched', (req, respp, next) => {
   const { picName, imgUrl: imgData, stu_id, stu_nick_name, ATTENDID } = req.body || {}
   // let picName=req.body.picName
   // let imgData=req.body.imgData
-  const image = fs.readFileSync(`F:\\Develop_work\\myWorkSpace\\graduction\\vue_cam_face_storm\\server\\public\\images\\face\\${picName}.jpg`)
   // const image = fs.readFileSync(`public/images/face/${picName}.jpg`);
-  // const image = fs.readFileSync(`../public/images/face/${picName}.jpg`);
-  // console.log(image)
-  const base64Img = Buffer.from(image).toString('base64')
+  //   // const image = fs.readFileSync(`../public/images/face/${picName}.jpg`);
+  //   // console.log(image)
   // console.log(base64Img)
+  // console.log(base64Data)
+
+  const image = fs.readFileSync(`文件路径${picName}.jpg`)
+
+  const base64Img = Buffer.from(image).toString('base64')
   let base64Data = imgData.replace(/\s/g, '+')
   base64Data = base64Data.replace(/^data:image\/\w+;base64,/, '')
-  // console.log(base64Data)
   client.match([{
     image: base64Img,
     image_type: 'BASE64'
-    // liveness_control:'HIGH',
-    // quality_control:'NORMAL',
   }, {
     image: base64Data,
     image_type: 'BASE64',
@@ -229,7 +229,7 @@ router.post('/infoed', (req, res, next) => {
 
   const stu_id = req.body.stu_id
   let project = AttendModel.findAndCountAll({
-    offset: offset || 1,
+    offset: offset || 0,
     limit: parseInt(req.body.limit) || 5,
     order: [['create_time', 'DESC']],
 

@@ -7,8 +7,8 @@
 
 
     <iframe id="mapPage" width="100%" height="400px" frameborder=0
-            src="https://apis.map.qq.com/tools/locpicker?search=0&type=1&policy=1&mapdraggable=0&radius=100&key=
-CBRBZ-B5QCX-SJZ4C-Z2SKO-W74ME-JMFPB&referer=unikeyword&total=2">
+            src="https://apis.map.qq.com/tools/locpicker?search=0&type=1&policy=0&mapdraggable=0&radius=300&key=
+ASBSC&referer=WEBKEY&total=2">
     </iframe>
     <el-button  @click="handleCheckCloseLocation" size="mini"  icon="el-icon-check">确认位置</el-button>
     <el-button type="primary" @click="HandleAttend" size="mini"  icon="el-icon-position" style="margin-left: 50px">进行签到</el-button>
@@ -102,7 +102,6 @@ export default {
 
   },
   mounted() {
-    this.getList()
     this.fromparam.ATTENDID=this.$route.params.ATTENDID
     this.fromparam.LATI=this.$route.params.LATI
     this.fromparam.LONGTI=this.$route.params.LONGTI

@@ -65,18 +65,6 @@
       <el-table-column label="身份证" prop="stu_idcard" width="180"/>
       <el-table-column label="户籍" prop="stu_oriplace" width="80"/>
       <el-table-column label="宿舍楼" prop="stu_dormitory" width="80"/>
-
-
-<!--      <el-table-column label="修改时间" align="center" prop="update_time" width="180">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ scope.row.update_time ? parseTime(scope.row.update_time) : '&#45;&#45;' }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="创建时间" align="center" prop="create_time" width="180">-->
-<!--        <template slot-scope="scope">-->
-<!--          <span>{{ parseTime(scope.row.create_time) }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="操作" align="center" width="220">
         <template slot-scope="scope">
 
@@ -121,9 +109,10 @@
       title="查看教师"
       :visible.sync="noseetea"
       direction="rtl"
-      size="60%">
+      size="45%">
     <el-table v-loading="loading" :data="teaList" @selection-change="handleSelectionChange" style="margin-top: 5%"
               >
+      <el-table-column label="姓名" prop="tea_nick_name" width="70"/>
       <el-table-column label="年龄" prop="tea_age" width="70"/>
 
       <el-table-column label="性别" prop="tea_sex" width="70"/>
@@ -131,18 +120,6 @@
       <el-table-column label="身份证" prop="tea_idcard" width="180"/>
       <el-table-column label="户籍" prop="tea_oriplace" width="80"/>
       <el-table-column label="宿舍楼" prop="tea_dormitory" width="80"/>
-
-
-      <el-table-column label="修改时间" align="center" prop="update_time" width="180">
-        <template slot-scope="scope">
-          <span>{{ scope.row.update_time ? parseTime(scope.row.update_time) : '--' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="create_time" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.create_time) }}</span>
-        </template>
-      </el-table-column>
     </el-table>
     </el-drawer>
 
@@ -183,7 +160,7 @@
 
 
         <el-form-item label="修改图片" prop="stu_pic" v-if="form.action === 'upload-image'&& form.action !== 'edit-pwd'&&form.action !== 'email-pwd'">
-          <el-upload drag action="https://p4k3652859.hsk.top/stu/uploadimage" multiple list-type="picture"
+          <el-upload drag action="/stu/uploadimage" multiple list-type="picture"
                      class="image-uploader"
                      :data="uploadData"
                      :show-file-list="false"
@@ -348,8 +325,7 @@ export default {
       console.log(res)
       this.msgSuccess(res.message)
       this.open = false
-      this.getList()
-
+      window.location.reload()
 
     },
     //上传之前调用的函数
@@ -539,19 +515,24 @@ export default {
       }
       this.open = true
       this.title = '修改学生图片'
-    },
-    submitUpload() {
-      this.$refs.upload.submit();
-    },
-    getFile(file, fileList) {
+        updateImage(this.form.stu_id, file.raw).then(response => {
+          this.msgSuccess(response.message)
+          this.open = false
+          window.location.reload()
+          if (this.form.stu_id === this.$store.getters.user_id) {
+            window.location.reload()
+          }
+        })
 
-      updateImage(this.form.stu_id, file.raw).then(response => {
-        this.msgSuccess(response.message)
-        this.open = false
-        this.getList()
-      })
+
+
 
     },
+
+
+
+
+
     /** 提交按钮 */
     submitForm: function () {
       this.$refs['form'].validate(valid => {
@@ -559,7 +540,7 @@ export default {
           if (this.form.action !== 'edit-pwd' && this.form.action !== 'upload-image'&& this.form.action !== 'email-pwd') {
             updatestudent(this.form).then(response => {
               if (this.form.stu_id === this.$store.getters.user_id) {
-                this.reLogin()
+                window.location.reload()
               }
               this.msgSuccess(response.message)
               this.open = false

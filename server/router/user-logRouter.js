@@ -25,7 +25,7 @@ router.get('/list', (req, res, next) => {
   }
   const offset = (req.query.page - 1) * req.query.limit
   UserLogsModel.findAndCountAll({
-    offset: offset || 1,
+    offset: offset || 0,
     limit: parseInt(req.query.limit) || 5,
     include: [
       {

@@ -200,7 +200,7 @@
         <!--        批量添加教师信息-->
         <el-form-item label="上传xls" prop="tea_xls"
                       v-if="form.action === 'upload-xls'&&form.action!=='addteainfo'&&form.action!=='edit-tea'">
-          <el-upload drag action="https://p4k3652859.hsk.top/tea/addteainfobyxls"
+          <el-upload drag action="/tea/addteainfobyxls"
                      ref="upload"
                      class="image-uploader"
                      :show-file-list="false"
@@ -528,7 +528,7 @@ export default {
 
     //批量导入教师需要下载的模板
     handleTempXls() {
-      window.open('https://p4k3652859.hsk.top/public/xlstempfile/tea_template.xls'
+      window.open('/public/xlstempfile/tea_template.xls'
       )
 
 

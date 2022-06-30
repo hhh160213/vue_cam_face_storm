@@ -104,7 +104,7 @@ router.post('/inforeqattend', (req, res, next) => {
         teadidarr.push(teaidsmany)
         console.log(teaidsmany)
         reqproject = ReqAttendModel.findAndCountAll({
-          offset: offset || 1,
+          offset: offset || 0,
           limit: parseInt(req.body.limit) || 5,
           order: [['dead_time', 'DESC']],
           where: {
@@ -314,17 +314,34 @@ router.post('/addbyxls', (req, res, next) => {
     let workshhet = workbook.Sheets[sheetna[0]]
 
     xlsxJson = XLSX.utils.sheet_to_json(workshhet)
+    let sqlArr=[]
+
     xlsxJson.map(xlsitem => {
       console.log('xlsitem------------------------------------')
       console.log(xlsitem)
       const md5 = crypto.createHash('md5')
-      const password = xlsitem.password
-      xlsitem.password = md5.update(password).digest('hex')
+      const password = xlsitem['学生密码']
+      xlsitem['学生密码']= md5.update(password).digest('hex')
+      sqlArr.push({
+        stu_name:xlsitem['学生账号'],
+        stu_nick_name:xlsitem['学生姓名'],
+        stu_sex:xlsitem['学生性别'],
+        password:xlsitem['学生密码'],
+        stu_mobile:xlsitem['学生手机'],
+        stu_idcard:xlsitem['学生身份证'],
+        stu_oriplace:xlsitem['学生户籍'],
+        stu_dormitory:xlsitem['学生宿舍'],
+        stu_email:xlsitem['学生邮箱'],
+        stu_age:xlsitem['学生年龄'],
+        status:xlsitem['学生账号启用状态'],
+        tea_name:xlsitem['学生任课教师账号'],
+      })
     })
-    console.log('xlsxJson---------------------------------')
-    console.log(xlsxJson)
+
+    console.log('sqlArr新的数组---------------------------------')
+    console.log(sqlArr)
     //批量插入学生表的信息
-    let sturesult = StuinfoModel.bulkCreate(xlsxJson)
+    let sturesult = StuinfoModel.bulkCreate(sqlArr)
     sturesult.then(stubulk => {
       //    打印刚刚插入的学生表的数据
       console.log('stubulk是个数组--------------------------------')
@@ -342,7 +359,7 @@ router.post('/addbyxls', (req, res, next) => {
             //       通过教师上传的账号找到teaid
             attributes: ['tea_id'],
             where: {
-              tea_name: xlsxJson[0].tea_name
+              tea_name: sqlArr[0].tea_name
             }
           })
           teaoneid.then(teaid => {
@@ -396,7 +413,7 @@ router.post('/addbyxls', (req, res, next) => {
                   } else {
                     return res.json({
                       code: 40000,
-                      message: '用户登录表批量插入数据失败',
+                      message: '用户登录表批量插入数据失败。请按照表格格式填充数据',
                       data: null
                     })
                   }
@@ -404,7 +421,7 @@ router.post('/addbyxls', (req, res, next) => {
               } else {
                 return res.json({
                   code: 40000,
-                  message: '学生-教师关系表插入失败',
+                  message: '学生-教师关系表插入失败，教师信息与学生未绑定成功',
                   data: null
                 })
               }
@@ -418,7 +435,13 @@ router.post('/addbyxls', (req, res, next) => {
           })
         }
       })
-    })
+    }).catch(errot=>{
+      console.log(errot)
+      return res.json({
+        code: 40000,
+        message: '不能插入已存在的数据！',
+        realerrdata: errot
+      })    })
   })
 
 })
@@ -630,13 +653,13 @@ n.jpg*/
     let userImgname = imgname.replace(/[^.]+/, username) //把扩展名前的文件名给替换掉
     console.log(userImgname,'userImgname')  //stua.jpg
     if (userImgname.includes('jpg') || userImgname.includes('png')) {
-      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
+      sinaname = "images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 
     } else {
       userImgname = userImgname + ".jpg"
-      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
+      sinaname = "/public/images/face/" + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
 

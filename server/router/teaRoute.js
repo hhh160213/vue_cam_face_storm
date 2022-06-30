@@ -7,34 +7,32 @@ const RolesModel = require('../model/rolesmodel')
 const UserLogsModel = require('../model/user-logs')
 const UsresRolesModel = require('../model/usersandroles')
 const Allmodel = require('../model/Allmodel')
-const StuinfoModel = require("../model/stuinfo");
-const TeainfoModel = require("../model/teainfo");
-const formidable = require("formidable");
-const path = require("path");
-const fs = require("fs");
-const sqlQuery = require("../model/config");
+const StuinfoModel = require('../model/stuinfo')
+const TeainfoModel = require('../model/teainfo')
+const formidable = require('formidable')
+const path = require('path')
+const fs = require('fs')
+const sqlQuery = require('../model/config')
 let sendmail = require('../utils/sendMail')
-const XLSX = require("xlsx");
-const Tea_StuModel = require("../model/teaandstu");
+const XLSX = require('xlsx')
+const Tea_StuModel = require('../model/teaandstu')
 const checkemail = {} //声明一个对象缓存邮箱和验证码，留着
-
 
 //通过post方式stu_id获取单个的api
 router.post('/info', (req, res, next) => {
   const tea_id = req.body.tea_id
   let project = TeainfoModel.findOne({
-    attributes: {exclude: ['password']},
+    attributes: { exclude: ['password'] },
     include: [
-      {model: StuinfoModel}
+      { model: StuinfoModel }
     ],
     where: {
       tea_id: tea_id
 
     }
-  });
-  project.then(function (tea_stu) {
+  })
+  project.then(function(tea_stu) {
     if (tea_stu !== null) {
-
 
       let stuarr = [tea_stu]
       return res.json({
@@ -55,12 +53,12 @@ router.post('/info', (req, res, next) => {
 //获取全部学教师的apui
 router.post('/list', (req, res, next) => {
   TeainfoModel.findAll({
-    attributes: {exclude: ['password']},
+    attributes: { exclude: ['password'] },
     include: [
-      {model: StuinfoModel}
+      { model: StuinfoModel }
     ],
     where: req.query
-  }).then(function (tea_stu) {
+  }).then(function(tea_stu) {
     return res.json({
       code: 20000,
       message: '获取全部教师信息以及学生成功list',
@@ -69,16 +67,15 @@ router.post('/list', (req, res, next) => {
   })
 })
 
-
 //教师发送邮箱验证码
-router.post('/sendmailtea', async (req, res, next) => {
+router.post('/sendmailtea', async(req, res, next) => {
   console.log(req.body)
   let mail = req.body.email
   let tea_id = req.body.tea_id
   const senddata = {
     rst: true,
-    data: "",
-    msg: ""
+    data: '',
+    msg: ''
   }
   if (!mail) {
     return res.send('参数错误')
@@ -87,8 +84,8 @@ router.post('/sendmailtea', async (req, res, next) => {
   checkemail[mail] = ran_code
   console.log(checkemail[mail])
   console.log(ran_code)
-  let sqlStr = "update teainfos set ran_code=? where tea_id=?"
-  let result = await sqlQuery(sqlStr, [ran_code, tea_id]);
+  let sqlStr = 'update teainfos set ran_code=? where tea_id=?'
+  let result = await sqlQuery(sqlStr, [ran_code, tea_id])
   console.log(result)
   if (result.warningCount === 0) {
     {
@@ -98,7 +95,7 @@ router.post('/sendmailtea', async (req, res, next) => {
           res.json({
             code: 20000,
             message: '发送邮件成功',
-            data: state,
+            data: state
 
           })
         } else {
@@ -114,7 +111,6 @@ router.post('/sendmailtea', async (req, res, next) => {
   }
 })
 
-
 //教师通过原密码修改密码
 router.post('/editpwded', (req, res, next) => {
   console.log(req.body)
@@ -127,7 +123,7 @@ router.post('/editpwded', (req, res, next) => {
   }
   const user_id = req.body.tea_id
   const old_password = req.body.old_password
-  UsersModel.findOne({where: {user_id: user_id}}).then(function (user) {
+  UsersModel.findOne({ where: { user_id: user_id } }).then(function(user) {
     if (!user) {
       return res.json({
         code: 40000,
@@ -162,8 +158,7 @@ router.post('/editpwded', (req, res, next) => {
         }
       })
 
-
-      result.then(function (ret) {
+      result.then(function(ret) {
         if (ret) {
           return res.json({
             code: 20000,
@@ -187,7 +182,7 @@ router.post('/editpwded', (req, res, next) => {
         where: {
           tea_id: stu_id
         }
-      }).then(function (sture) {
+      }).then(function(sture) {
         console.log(sture.dataValues.ran_code)
         if (sture.dataValues.ran_code == email_pwd) {
 
@@ -206,7 +201,7 @@ router.post('/editpwded', (req, res, next) => {
               tea_id: stu_id
             }
           })
-          result.then(function (ret) {
+          result.then(function(ret) {
             if (ret) {
               return res.json({
                 code: 20000,
@@ -227,40 +222,59 @@ router.post('/editpwded', (req, res, next) => {
   })
 })
 
-
-//高层批量上传教师信息
+//批量上传教师信息
 router.post('/addteainfobyxls', (req, res, next) => {
   console.log(req.body)
-  var form = new formidable.IncomingForm();
-  var xlsxJson;
-  form.keepExtensions = true;         // 保存后缀名
-  form.encoding = 'utf-8';            // 编码方式
-  form.uploadDir = 'public/tmp';      // 临时上传路径
-  form.parse(req, function (err, fields, files) {
+  var form = new formidable.IncomingForm()
+  var xlsxJson
+  form.keepExtensions = true         // 保存后缀名
+  form.encoding = 'utf-8'            // 编码方式
+  form.uploadDir = 'public/tmp'      // 临时上传路径
+  form.parse(req, function(err, fields, files) {
     // 重命名并修改上传文件的路径
-    var sourceFileName = files.file.newFilename;
-    var tempPath = files.file.filepath;
-    var targetPath = 'public/xlsexcel/' + sourceFileName;
-    fs.renameSync(tempPath, targetPath);
+    var sourceFileName = files.file.newFilename
+    var tempPath = files.file.filepath
+    var targetPath = 'public/xlsexcel/' + sourceFileName
+    fs.renameSync(tempPath, targetPath)
     let workbook = XLSX.readFile(targetPath)
     let sheetna = workbook.SheetNames
     let workshhet = workbook.Sheets[sheetna[0]]
 
     xlsxJson = XLSX.utils.sheet_to_json(workshhet)
+    console.log('xlsxJson数组批量导入------------------------------------')
+    console.log(xlsxJson)
+    let sqlArr=[]
+
     xlsxJson.map(xlsitem => {
       console.log('xlsitem------------------------------------')
       console.log(xlsitem)
       const md5 = crypto.createHash('md5')
-      const password = xlsitem.password
-      xlsitem.password = md5.update(password).digest('hex')
+      const password = xlsitem['教师密码']
+      xlsitem['教师密码']= md5.update(password).digest('hex')
+      sqlArr.push({
+        tea_name:xlsitem['教师账号'],
+        tea_nick_name:xlsitem['教师姓名'],
+        tea_sex:xlsitem['教师性别'],
+        password:xlsitem['教师密码'],
+        tea_mobile:xlsitem['教师手机'],
+        tea_idcard:xlsitem['教师身份证'],
+        tea_oriplace:xlsitem['教师户籍'],
+        tea_dormitory:xlsitem['教师宿舍'],
+        tea_email:xlsitem['教师邮箱'],
+        tea_age:xlsitem['教师年龄'],
+        status:xlsitem['教师账号启用状态'],
+      })
     })
-    console.log('xlsxJson---------------------------------')
-    console.log(xlsxJson)
+
+        console.log('sqlArr新的数组---------------------------------')
+    console.log(sqlArr)
+
+
     //批量插入教师表的信息
-    let sturesult = TeainfoModel.bulkCreate(xlsxJson)
+    let sturesult = TeainfoModel.bulkCreate(sqlArr)
     sturesult.then(stubulk => {
       //    打印刚刚插入的学生表的数据
-      console.log('stubulk是个数组--------------------------------')
+      console.log('stubulk数组--------------------------------')
       console.log(stubulk)
       stubulk.map(stuitem => {
         console.log('stuitem-----------------------')
@@ -278,7 +292,7 @@ router.post('/addteainfobyxls', (req, res, next) => {
             user_name: stuitem.tea_name,
             user_email: stuitem.tea_email,
             user_nick_name: stuitem.tea_nick_name,
-            status: 1,
+            status: 1
           })
           bulkuser.then(bulkuserdata => {
             console.log('bulkuserdata------------------')
@@ -286,7 +300,7 @@ router.post('/addteainfobyxls', (req, res, next) => {
             if (bulkuserdata._options.isNewRecord === true) {
               let user_role = UsresRolesModel.create({
                 user_id: stuitem.tea_id,
-                role_id: 4,
+                role_id: 4
               })
               user_role.then(usro => {
                 console.log('usro---------------------------')
@@ -300,7 +314,7 @@ router.post('/addteainfobyxls', (req, res, next) => {
                 } else {
                   return res.json({
                     code: 40000,
-                    message: '教师信息导入失败',
+                    message: '教师信息导入失败,请按照模板文件填充信息！',
                     data: null
                   })
                 }
@@ -308,32 +322,33 @@ router.post('/addteainfobyxls', (req, res, next) => {
             } else {
               return res.json({
                 code: 40000,
-                message: '用户登录表批量插入数据失败,可能是教师账号与系统有重复！',
+                message: '批量插入数据失败,教师账号有重复！',
                 data: null
               })
             }
           })
 
-
         } else {
           return res.json({
             code: 40000,
-            message: '教师表批量插入数据失败',
+            message: '教师信息批量插入失败，教师信息已存在！',
             data: null
           })
         }
       })
-    })
+    }).catch(errot=>{
+      console.log(errot)
+      return res.json({
+        code: 40000,
+        message: '不能插入已存在的数据！',
+        data: null
+      })    })
   })
 
 })
 
-
 //修改上传教师图片(可无)
 router.post('/uploadimage', (req, res, next) => {
-
-
-
 
   let form = new formidable.IncomingForm()
   // console.log(form)
@@ -355,33 +370,28 @@ n.jpg*/
 // n.jpg
     let userImgname = imgname.replace(/[^.]+/, username) //把扩展名前的文件名给替换掉
     console.log(userImgname)  //stua.jpg
-    if (userImgname.includes('jpg')||userImgname.includes('png'))
-    {
-      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
+    if (userImgname.includes('jpg') || userImgname.includes('png')) {
+      sinaname = '/images/face/' + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
 
-
-    }
-    else {
-      userImgname=userImgname+".jpg"
-      sinaname = "https://p4k3652859.hsk.top/public/images/face/" + userImgname
+    } else {
+      userImgname = userImgname + '.jpg'
+      sinaname = '/images/face/' + userImgname
       newPath = path.join(path.dirname(oldPath), userImgname)
-
 
     }
     console.log(sinaname)
     //我这里为了方便存储 统一将文件名改为 <用户名>.jpg
     //  newPath = path.join(path.dirname(oldPath), userImgname)
     console.log(newPath) //D:\Develop\face_recog\1219express\vue-element-admin-express\server\public\images\face\stua.jpg
-    fs.rename(oldPath, newPath, async (err) => {
+    fs.rename(oldPath, newPath, async(err) => {
       if (err) return next(err)
-
 
     })
 
   })
   const sturesult = TeainfoModel.updateImage(sinaname, modiuid)
-  sturesult.then(function (student) {
+  sturesult.then(function(student) {
     if (student !== true) {
       return res.json({
         code: 40000,
@@ -399,9 +409,8 @@ n.jpg*/
   })
 })
 
-
 //高层单个添加教师信息
-router.post('/addteabyuser', async (req, res, next) => {
+router.post('/addteabyuser', async(req, res, next) => {
   console.log(req.body)
   let {
     user_name,
@@ -425,7 +434,6 @@ router.post('/addteabyuser', async (req, res, next) => {
   password = md5.update(password).digest('hex')
   console.log(password)
   // const result = UsersModel.addUser(req.body)
-
 
   //先在users表中插入一条数据
   let userresult = UsersModel.create({
@@ -466,7 +474,7 @@ router.post('/addteabyuser', async (req, res, next) => {
           //把教师分配给教师角色，在user_role表中插入一条教师的id和role角色的id
           let roleresult = UsresRolesModel.create({
             role_id: 4,
-            user_id: userret.dataValues.user_id,
+            user_id: userret.dataValues.user_id
           })
 
           //如果教师分配角色role_id成功
@@ -479,7 +487,6 @@ router.post('/addteabyuser', async (req, res, next) => {
                 data: rolere
               })
 
-
             } else {
 
               return res.json({
@@ -491,7 +498,6 @@ router.post('/addteabyuser', async (req, res, next) => {
 
           })
 
-
         } else {
           //教师表插入失败
           return res.json({
@@ -501,7 +507,6 @@ router.post('/addteabyuser', async (req, res, next) => {
           })
         }
       })
-
 
     } else {
       //用户表第一步就插入失败
@@ -514,13 +519,12 @@ router.post('/addteabyuser', async (req, res, next) => {
 
   })
 
-
 })
 
 /*教师
 * 修改个人信息
 * */
-router.post('/edit', async (req, res, next) => {
+router.post('/edit', async(req, res, next) => {
   console.log(req.body)
   const result = TeainfoModel.updateTea(req.body)
   let tea_id = req.body.tea_id
@@ -529,8 +533,7 @@ router.post('/edit', async (req, res, next) => {
   let sqlre1 = await sqlQuery(sql1, [tea_email, tea_id])
   // console.log(sqlre1)
 
-
-  result.then(function (ret) {
+  result.then(function(ret) {
     if (ret === true && sqlre1.warningCount === 0) {
       return res.json({
         code: 20000,
@@ -547,14 +550,12 @@ router.post('/edit', async (req, res, next) => {
   })
 })
 
-
 /*删除教师信息，根据id*/
 router.post('/del', (req, res, next) => {
   const tea_id = req.body.tea_id
   let result = TeainfoModel.delTea(tea_id || [])
 
-
-  result.then(function (teach) {
+  result.then(function(teach) {
     if (teach !== true) {
       return res.json({
         code: 40000,
@@ -571,9 +572,6 @@ router.post('/del', (req, res, next) => {
     return e
   })
 
-
 })
-
-
 
 module.exports = router

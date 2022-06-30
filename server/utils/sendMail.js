@@ -1,12 +1,11 @@
 const nodemailer = require('nodemailer'); //引入模块
 let transporter = nodemailer.createTransport({
-    //node_modules/nodemailer/lib/well-known/services.json  查看相关的配置，如果使用qq邮箱，就查看qq邮箱的相关配置
-	service: '126', //类型qq邮箱
-	port: 465,
+	service: '', //类型qq邮箱
+	port: '',
 	secure: true, // true for 465, false for other ports
 	auth: {
-		user: 'hsq199811@126.com', // 发送方的邮箱
-		pass: 'BXTCPGEKHHIQTIJP' // smtp 的授权码
+		user: '', // 发送方的邮箱
+		pass: '' // smtp 的授权码
 	}
 });
 //pass 不是邮箱账户的密码而是stmp的授权码（必须是相应邮箱的stmp授权码）
@@ -15,7 +14,7 @@ let transporter = nodemailer.createTransport({
 function sendMail(mail, code, call) {
 	// 发送的配置项
 	let mailOptions = {
-		from: '"系统邮箱验证码" <hsq199811@126.com>', // 发送方
+		from: '"系统邮箱验证码"', // 发送方
 		to: mail, //接收者邮箱，多个邮箱用逗号间隔
 		subject: '欢迎使用"校园考勤系统。您正在重置密码"', // 标题
 		text: '欢迎使用"校园考勤系统。您正在重置密码', // 文本内容
