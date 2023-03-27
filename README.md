@@ -383,8 +383,8 @@ let options = {
     database:"flask_fa"
 
 }
-3.数据库文件sql放在  vue_campus.sql
-自行创建数据库sql   将该sql语句导入数据库即可正常使用
+3.数据库文件sql放在 根目录下 campus_fix_p.sql
+   将该sql语句导入数据库即可正常使用
 
 ```
 
