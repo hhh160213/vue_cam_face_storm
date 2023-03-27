@@ -71,6 +71,23 @@ CREATE TABLE `menus` (
   PRIMARY KEY (`menu_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+
+
+insert  into `menus`(`menu_id`,`parent_id`,`title`,`sort`,`type`,`icon`,`name`,`component`,`path`,`redirect`,`permission`,`hidden`,`update_time`,`create_time`) values 
+(7,0,'系统管理',0,'M','component','System','Layout','/system','/system/user',NULL,0,NULL,'2020-05-24 18:51:21'),
+(8,7,'菜单管理',0,'C','list','Menu','/system/menu','/system/menu','','system:menu',0,NULL,'2020-05-24 18:52:26'),
+(9,7,'权限管理',0,'C','peoples','Role','/system/role','/system/role','','system:role',0,NULL,'2020-05-24 18:53:31'),
+(10,7,'用户管理',1,'C','user','User','/system/user','/system/user','','system:user',0,'2020-05-24 18:58:01','2020-05-24 18:54:26'),
+(11,7,'登录日志',0,'C','log','Log','/system/log','/system/log','','system:log',0,NULL,'2020-05-24 18:55:20'),
+(20,0,'签到管理',0,'M','date','Present','Layout','/present','/present/face',NULL,0,'2021-12-21 21:05:44','2021-12-21 21:04:59'),
+(21,20,'人脸签到',0,'C','people','face','/present/face','/present/face','','present:face',0,NULL,'2021-12-21 21:07:31'),
+(22,20,'位置签到',0,'C','guide','loca','/present/location','/present/location',NULL,'present:location',0,'2021-12-21 21:12:50','2021-12-21 21:10:15'),
+(23,20,'随机码签到',0,'C','code','random','/present/random','/present/random',NULL,'present:random',0,NULL,'2021-12-21 21:11:13'),
+(24,7,'学生信息',0,'C','education','stuinfo','/system/stuinfo','/system/stuinfo','','system:stuinfo',0,'2021-12-22 10:07:37','2021-12-22 10:01:17'),
+(25,7,'教师信息',0,'C','monitor','teainfo','/system/teainfo','/system/teainfo','','system:teainfo',0,NULL,'2021-12-22 10:02:32');
+
+/*Table structure for table `roles` */
+
 /*Data for the table `menus` */
 
 
@@ -128,6 +145,12 @@ CREATE TABLE `roles` (
 
 /*Data for the table `roles` */
 
+insert  into `roles`(`role_id`,`role_name`,`remark`,`status`,`menu_ids`,`buttons`,`update_time`,`create_time`) values 
+(1,'管理员','拥有全部权限',1,'[7,10,8,9,11,24,25,20,21,22,23]','[{\"menu_id\":10,\"btns\":[\"system:user:query\",\"system:user:add\",\"system:user:edit\",\"system:user:del\"]},{\"menu_id\":8,\"btns\":[\"system:menu:del\",\"system:menu:edit\",\"system:menu:add\",\"system:menu:query\"]},{\"menu_id\":9,\"btns\":[\"system:role:query\",\"system:role:add\",\"system:role:del\",\"system:role:edit\"]},{\"menu_id\":11,\"btns\":[\"system:log:query\",\"system:log:del\",\"system:log:add\",\"system:log:edit\"]},{\"menu_id\":21,\"btns\":[\"present:face:query\",\"present:face:add\",\"present:face:edit\",\"present:face:del\"]},{\"menu_id\":22,\"btns\":[\"present:location:query\",\"present:location:add\",\"present:location:del\",\"present:location:edit\"]},{\"menu_id\":23,\"btns\":[\"present:random:query\",\"present:random:add\",\"present:random:del\",\"present:random:edit\"]},{\"menu_id\":24,\"btns\":[\"system:stuinfo:query\",\"system:stuinfo:add\",\"system:stuinfo:edit\",\"system:stuinfo:del\"]},{\"menu_id\":25,\"btns\":[\"system:teainfo:query\",\"system:teainfo:add\",\"system:teainfo:edit\",\"system:teainfo:del\"]}]','2021-12-22 10:07:47','2020-05-16 21:14:50'),
+(3,'学生',NULL,1,'[7,10,8,9,11,20,21,22,23]','[{\"menu_id\":10,\"btns\":[\"system:user:query\"]},{\"menu_id\":8,\"btns\":[\"system:menu:query\"]},{\"menu_id\":11,\"btns\":[\"system:log:query\"]},{\"menu_id\":9,\"btns\":[\"system:role:query\"]}]','2021-12-21 21:16:04','2020-05-22 18:50:23'),
+(4,'教师',NULL,1,'[7,10,8,9,11,20,21,22,23]','[]',NULL,'2021-12-21 21:15:38');
+
+/*Table structure for table `stuinfos` */
 
 DROP TABLE IF EXISTS `socket_message`;
 
@@ -182,6 +205,9 @@ CREATE TABLE `tea_stus` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1028 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `tea_stus` */
+insert  into `tea_stus`(`tea_stu_id`,`stu_id`,`tea_id`,`create_time`) values 
+(500,50,200,'2021-12-23 08:52:52'),
+(501,51,201,'2021-12-23 08:52:58');
 
 
 /*Table structure for table `teainfos` */
@@ -243,6 +269,10 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5002 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `users` */
+insert  into `users`(`user_id`,`user_name`,`password`,`status`,`update_time`,`create_time`) values 
+(1,'admin','21232f297a57a5a743894a0e4a801fc3',1,'2021-12-21 21:03:51','2020-05-16 21:15:43'),
+(3,'dzz','7491e82795267307ad3c1810ca303f16',1,'2021-12-21 21:17:42','2020-05-23 19:43:54'),
+(4,'zhang','d0cd2693b3506677e4c55e91d6365bff',1,NULL,'2021-12-21 21:18:23');
 
 
 /*Table structure for table `users_roles` */
@@ -258,3 +288,7 @@ CREATE TABLE `users_roles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=297 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `users_roles` */
+insert  into `users_roles`(`user_role_id`,`role_id`,`user_id`,`create_time`) values 
+(1,1,1,'2020-05-16 21:15:03'),
+(14,3,3,'2020-05-24 11:19:35'),
+(16,4,4,'2021-12-21 21:18:23');
